@@ -1,2 +1,2 @@
 # teacc
-Personal Software Project Experiments "(Social Tea Network"; C++; C#; Laravel; Electron, ...).
+Personal Software Project Experiments ("Social Tea Network"; C++; C#; Laravel; Electron, ...).
