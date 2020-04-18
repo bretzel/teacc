@@ -7,11 +7,22 @@
 
 #pragma once
 
-class UtilTests
+#include <teacc/Util/Rem.h>
+
+namespace teacc::Util
 {
 
+class UtilTests
+{
+public:
+    
+    UtilTests() = default;
+    ~UtilTests();
+    
+    Expect <> Init(int argc, char** argv);
+    
+    
 };
 
-
-
+}
 //#endif //UTIL_UTILTESTS_H

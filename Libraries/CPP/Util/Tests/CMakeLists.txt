@@ -22,7 +22,7 @@ target_include_directories(UtilTests.app PUBLIC
         )
 
 target_link_libraries(UtilTests.app ${CMAKE_DL_LIBS} Util)# sqlitedb logbook sqlite3 lexer interpreter)#journal grammar lexer utils sqlitedb)
-
+target_compile_features("${PROJECT_NAME}" PUBLIC cxx_std_17)
 
 IF (EXISTS "${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json")
     EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E copy_if_different

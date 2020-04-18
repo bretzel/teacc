@@ -170,7 +170,7 @@ public:
     { return _D; }
     
     // -- on peut maintenant commencer nos routines de manipulations et de traitements....
-    String::Collection ArgsArray(int argc, char **argv);
+    static String::Collection ArgsArray(int argc, char **argv);
     String &operator<<(const String &aStr);
     String &operator<<(const char *aStr);
     String &operator<<(const std::string &aStr);
