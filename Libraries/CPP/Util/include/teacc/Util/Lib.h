@@ -21,19 +21,19 @@
 #   define _SCL_SECURE_NO_WARNINGS
 
 #   ifdef UTIL_DLL_EXPORT
-#       define PUBLIC_LIB __declspec(dllexport)
+#       define UTIL_LIB __declspec(dllexport)
 #       if __GNUC__ >= 4
-#           define PUBLIC_LIB __attribute__ ((visibility ("default")))
+#           define UTIL_LIB __attribute__ ((visibility ("default")))
 #           define PRIVATE_LIB  __attribute__ ((visibility ("hidden")))
 #       else
-#           define PUBLIC_LIB
+#           define UTIL_LIB
 #           define PRIVATE_LIB
 #       endif
 #   else
-#       define PUBLIC_LIB __declspec(dllimport)
+#       define UTIL_LIB __declspec(dllimport)
 #   endif
 #   else
-#       define PUBLIC_LIB    // Not ms-Windows/MSVC
+#       define UTIL_LIB    // Not ms-Windows/MSVC
 #endif
 
 // Mandatory. Globally used where it needs to.
