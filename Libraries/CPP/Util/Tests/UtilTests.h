@@ -41,7 +41,7 @@ public:
     ~UtilTests();
     
     Expect <> Init(int argc, char** argv);
-    Expect <> TestAppLog();
+    Expect <> TestAppBook();
     
     Expect <> Run(int argc, char **argv);
     Expect <> TestString();

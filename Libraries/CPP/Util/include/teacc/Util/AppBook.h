@@ -34,7 +34,7 @@
 
 namespace teacc
 {
-// No namespace here. AppLog to be used so fuKJK* too often.
+// No namespace here. AppBook to be used so fuKJK* too often.
 
 
 
@@ -46,19 +46,19 @@ namespace teacc
  * @note Single Instance.
  */
 
-class UTIL_LIB AppLog
+class UTIL_LIB AppBook
 {
     
     Util::String mText; // ??
-    static AppLog *mStaticInstance;
+    static AppBook *mStaticInstance;
     std::ofstream mOutFile;         ///< the instance of file.
     std::ostream  *mFile = nullptr; ///< pointer to the ofstream { stdout; or file stream}.
     
-    AppLog() = default;
+    AppBook() = default;
 public:
     
     // Colors
-    enum
+    enum Color
     {
     
         /*0   */ None,//#000000	rgb(128,0,0)	hsl(0,100%,25%)
@@ -320,20 +320,25 @@ public:
         /*255 */ Grey93                   //#eeeeee	rgb(238,238,238)	hsl(0,0%,93%)
     };
     
-    enum Prefix
+    enum Mode
     {
         Html,
-        Ansi,
+        Ansi
+    };
+    enum Prefix
+    {
+        
         Debug,
         Info,
         Error,
         Warning,
         Exception,
         Fatal,
-        Success
+        Success,
+        Notice
     };
     
-    enum Style // ?
+    enum Component // ?
     {
          Reset,
          Italic,
@@ -343,15 +348,46 @@ public:
          EndCode,
          Pre,
          EndPre,
+         Eol
         // -----------------------------------
     };
     
+    struct UTIL_LIB Log
+    {
+        Log* mParent = nullptr;
+        Log* mChild = nullptr;
+        AppBook::Prefix mPrefix = AppBook::Prefix::Debug;
+        Util::String mText; ///< Local Text;
+        int mIndent = 0;    ///< By 4 <spc>
+        //...
+        
+        
+        AppBook::Log &operator<<(AppBook::Prefix);
+        AppBook::Log &operator<<(AppBook::Component);
+        AppBook::Log &operator<<(AppBook::Color);
+        
+        
+        template<typename T> Log& operator << (const T& V)
+        {
+            mText << V; // Uses default Util::String input operator.
+            return *this;
+        }
+        
+        Log() = default;
+        ~Log();
+        
+        Log(AppBook::Prefix);
+        
+        void SetParent(Log* Parent_);
+        void SetChild(Log* Child_);
+        
+        //void Detach();
+        void End();
+    };
+    ~AppBook();
     
-    
-    ~AppLog();
-    
-    static AppLog& Instance();
-    static AppLog& Init(/* ...*/);
+    static AppBook& Instance();
+    static AppBook& Init(/* ...*/);
     
     // Let's try a config struct
     struct ConfigData
@@ -362,36 +398,33 @@ public:
         //...
     };
     
-//    /*!
-//     * @brief Single Log Entry.
-//     *
-//     *
-//     */
-//    struct In
-//    {
-//        Util::String mText; ///< Text Accumulator of this Log instance;
-//
-//
-//    };
     
     /*!
-     * @brief Expose ConfigData instance:
+     * @brief Expose ConfigData instance for filling its parameters
      *
      * @code
-     *      AppLog::Instance.Config() = {
+     *      AppBook::Instance.Config() = {
      *          "The Application LogBook!",
      *          "Filename.log",
-     *          AppLog::Ansi
+     *          AppBook::Ansi
      *      };
      *
      * @endcode
      * @return Reference to the ConfigData;
      */
-    static AppLog::ConfigData& Config();
+    static AppBook::ConfigData& Config();
+    static Log& Begin(AppBook::Prefix);
+    static AppBook& End();
+    
     
     
 private:
-    AppLog::ConfigData mConfig;
+    friend struct Log;
+    AppBook::ConfigData mConfig;
+    static std::string ToStr(Prefix Prefix_);
+    std::map<AppBook::Component, std::string> mComponentData;
+    Log* mCurrentLog = nullptr;
+    
 };
 //#endif //UTIL_APPLOG_H
 

@@ -1,3 +1,5 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "google-explicit-constructor"
 //
 // Created by bretzel on 20-04-18.
 //
@@ -249,3 +251,5 @@ public:
 }
 
 //#endif //UTIL_REM_H
+
+#pragma clang diagnostic pop

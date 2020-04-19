@@ -4,10 +4,10 @@
 
 //#include <teacc/Util/String.h>
 #include "UtilTests.h"
-#include <teacc/Util/AppLog.h>
+#include <teacc/Util/AppBook.h>
 
 using namespace teacc::Util;
-using teacc::AppLog;
+using teacc::AppBook;
 
 
 auto main(int argc, char**argv) -> int
@@ -53,17 +53,22 @@ Expect<> UtilTests::Init(int argc, char **argv)
     
 }
 
-Expect<> UtilTests::TestAppLog()
+Expect<> UtilTests::TestAppBook()
 {
-    mDiagnostics.push_back({"AppLog"});
+    mDiagnostics.push_back({"AppBook"});
     DiagnosticData &Dia = mDiagnostics.back();
     
-    AppLog::Config() ={
+    AppBook::Config() ={
         "Teacc :: Util :: Tests.",
         "UtilTests.log",
-        AppLog::Ansi
+        AppBook::Ansi
     };
-    AppLog::Init();
+    AppBook::Init();
+    AppBook::Log& Log = AppBook::Begin(AppBook::Info);
+    
+    Log << "Hello!" << AppBook::Color::DarkSeaGreen1  << AppBook::Eol;
+    Log.End();
+    AppBook::End();
     
     Dia.mResult = Rem::Int::Ok;
     return Dia.mResult;
@@ -77,7 +82,7 @@ Expect<> UtilTests::Run(int argc, char **argv)
     
     
     Init(argc, argv); // E is expected to be "false";
-    TestAppLog();
+    TestAppBook();
     TestString();
     
     Dia.mResult = Rem::Int::Ok;
