@@ -37,6 +37,8 @@ std::string Rem::Text()
 std::string Rem::operator()()
 {
     mText.clear();
+    if(mVerticalData.empty())
+        return "empty"; // ?
     
     for(auto &R : mVerticalData)
     {
@@ -104,9 +106,9 @@ std::string Rem::ToStr(Rem::Type T)
         {Rem::Type::Return,  "Return"},
         {Rem::Type::Value,   "Value"},
         {Rem::Type::State,   "State"},
-        {Rem::Type::State,   "Debug"}
+        {Rem::Type::Debug,   "Debug"}
     };
-    return _[T];
+    return "Rem::" + _[T];
 }
 
 

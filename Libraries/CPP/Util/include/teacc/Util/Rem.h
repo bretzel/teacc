@@ -126,7 +126,7 @@ public:
     
     Expect(const T &V)
     {
-        mVal = V;
+        mVal = V; // Must remove const ?
         mF   = true;
     }
     
@@ -144,10 +144,7 @@ public:
     
     Expect &operator=(Rem &R)
     {
-        if(mF)
-        {
-            mVal.reset();
-        }
+        mVal.reset();
         mF = false;
         mVal = R;
         return *this;
@@ -155,7 +152,8 @@ public:
     
     Expect &operator=(Expect &&E) noexcept
     {
-        mVal = std::move(mVal);
+        mVal.reset();
+        mVal = std::move(E.mVal);
         mF = std::move(E.mF);
         
         return *this;
@@ -173,8 +171,8 @@ public:
     
     Expect &operator=(const T &V)
     {
-        if(mF)
-            mVal.reset();
+//        /if(mF)
+        mVal.reset();
         mVal = V;
         mF = true;
         return *this;
@@ -194,8 +192,11 @@ public:
     {
         if(!mF)
         {
-            //Rem::Save(), notification::type::error, ": ", __PRETTY_FUNCTION__, " - Expected value was not returned.";
-            mVal = T();
+            Rem::Save() <<  Rem::Type::Error <<  ": " << __PRETTY_FUNCTION__ <<  " - Expected value was not returned. >>\n >> " <<
+            std::any_cast<Rem>(mVal).operator()();
+            
+            mVal.reset();
+            mVal = T(); // Yep... T must be default-constructible...
         }
         return std::any_cast<T &>(mVal);
     }
@@ -218,7 +219,7 @@ public:
     
     ~Expect()
     {
-        Reset();
+        //Reset();
     }
     /*!
         @brief  to be verified.

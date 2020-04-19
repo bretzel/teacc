@@ -12,14 +12,39 @@
 namespace teacc::Util
 {
 
+
+/*!
+ * @brief
+ *
+ * @todo Build a stacked Tests[Data] structure containing its own local diagnostics. :)
+ */
+ 
 class UtilTests
 {
+    struct DiagnosticData
+    {
+        using Collection = std::vector<DiagnosticData>;
+        using Iterator   = Collection::iterator;
+        
+        std::string mName;
+        Expect<> mResult = Rem::Int::Unset;
+        
+        std::string operator()();
+    };
+    
+    DiagnosticData::Collection mDiagnostics;
+    
+    
 public:
     
     UtilTests() = default;
     ~UtilTests();
     
     Expect <> Init(int argc, char** argv);
+    Expect <> TestAppLog();
+    
+    Expect <> Run(int argc, char **argv);
+    Expect <> TestString();
     
     
 };
