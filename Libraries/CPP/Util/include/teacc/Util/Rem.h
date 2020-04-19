@@ -15,7 +15,7 @@
 namespace teacc::Util
 {
 
-class Rem
+class UTIL_LIB Rem
 {
     
     std::string mText;

@@ -14,7 +14,7 @@ auto main(int argc, char**argv) -> int
     UtilTests Test;
     Expect<> E = Test.Init(argc, argv);
     
-    String Str = "Hello, World!\n ==> This the VeryFirst of the %s Tests!\n----------------------------------------------------------\n";
+    String Str = "Hello, World!\n ==> This is the VeryFirst of the %s Tests!\n----------------------------------------------------------\n";
     Str << " teacc::Util Library";
     std::cout << Str();
     
