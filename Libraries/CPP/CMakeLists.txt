@@ -6,7 +6,7 @@ set(FrameWorkName "teacc")
 
 option(BUILD_UTIL "Enable building Utility library" ON)
 option(BUILD_LOGBOOK "Enable building the Logbook Library" OFF)
-option(BUILD_LEXER "Enable building the Lexer & Tokens Library" OFF)
+option(BUILD_LEXER "Enable building the Lexer & Tokens Library" ON)
 option(BUILD_TEACCDB   "Enable building teacc database provider engines support (SQLite3; Prosgres)" OFF)
 option(BUILD_TDD "Enable building tdd" OFF)
 option(BUILD_INTERPRETER "Enable building the teacc interpreter" OFF)
