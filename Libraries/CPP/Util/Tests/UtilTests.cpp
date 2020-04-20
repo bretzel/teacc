@@ -58,6 +58,7 @@ Expect<> UtilTests::TestAppBook()
     mDiagnostics.push_back({"AppBook"});
     DiagnosticData &Dia = mDiagnostics.back();
     
+    
     AppBook::Config() ={
         "Teacc :: Util :: Tests.",
         "UtilTests.log",
@@ -66,9 +67,19 @@ Expect<> UtilTests::TestAppBook()
     AppBook::Init();
     AppBook::Log& Log = AppBook::Begin(AppBook::Info);
     
-    Log << "Hello!" << AppBook::Color::DarkSeaGreen1  << AppBook::Eol;
+    Log
+        << Color::BlueViolet
+        << "Hello!"
+        << TextCtl::Reset
+        << Log.Endl();
+    
+    Log << Color::Grey100 << AppBook::Debug << " Hello AGAIN!" << TextCtl::Reset << Log.Endl();
     Log.End();
-    AppBook::End();
+    
+    std::cout << AppBook::Instance().Text();
+    AppBook::End([](const std::string& txt) {
+      std::cout << "\n\n" << __PRETTY_FUNCTION__ << ":\n-----------------------\n  >>  Stream From AppBook:\n-----------------------\n" <<  txt << "\n--------------\n Stream From AppBook END \n------------\n\n";
+    });
     
     Dia.mResult = Rem::Int::Ok;
     return Dia.mResult;
