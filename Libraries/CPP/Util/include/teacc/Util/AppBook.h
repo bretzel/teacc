@@ -366,6 +366,7 @@ public:
         Log* mChild = nullptr;
         //using PrefixMap = std::map<AppBook::Prefix, std::string>;
         Util::String mText; ///< Local Text;
+        AppBook::Prefix     mPrefix = AppBook::Prefix::Notice;
         int mIndent = 0;    ///< By 4 <spc>
         //...
         
