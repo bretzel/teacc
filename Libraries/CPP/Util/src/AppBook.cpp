@@ -78,14 +78,14 @@ AppBook::Log &AppBook::Begin(AppBook::Prefix Prefix_)
 std::string AppBook::ToStr(AppBook::Prefix Prefix_)
 {
     std::map<AppBook::Prefix, std::string> _ = {
-        {AppBook:: Debug    ,"\x1b[38;5;245m➤Debug\x1b[0m"},
-        {AppBook:: Info     ,"\x1b[38;5;68m⚫Info\x1b[0m"},
-        {AppBook:: Error    ,"\x1b[38;5;52m✘Error\x1b[0m"},
-        {AppBook:: Warning  ,"\x1b[38;5;100m⚠Warning\x1b[0m"},
-        {AppBook:: Exception,"\x1b[38;5;177m⚡Exception\x1b[0m"},
-        {AppBook:: Fatal    ,"\x1b[38;5;52m☠Fatal\x1b[0m"},
-        {AppBook:: Success  ,"\x1b[38;5;46m✔Success\x1b[0m"},
-        {AppBook:: Notice   ,"\x1b[38;5;71m✎Notice\x1b[0m"}
+        {AppBook:: Debug    ,"\x1b[38;5;245m➤ Debug\x1b[0m"},
+        {AppBook:: Info     ,"\x1b[38;5;68m⚫ Info\x1b[0m"},
+        {AppBook:: Error    ,"\x1b[38;5;52m✘ Error\x1b[0m"},
+        {AppBook:: Warning  ,"\x1b[38;5;100m⚠ Warning\x1b[0m"},
+        {AppBook:: Exception,"\x1b[38;5;177m⚡ Exception\x1b[0m"},
+        {AppBook:: Fatal    ,"\x1b[38;5;52m☠ Fatal\x1b[0m"},
+        {AppBook:: Success  ,"\x1b[38;5;46m✔ Success\x1b[0m"},
+        {AppBook:: Notice   ,"\x1b[38;5;71m✎ Notice\x1b[0m"}
     };
     return _[Prefix_];
 }

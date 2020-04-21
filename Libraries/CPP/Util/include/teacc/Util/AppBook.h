@@ -364,7 +364,6 @@ public:
     {
         Log* mParent = nullptr;
         Log* mChild = nullptr;
-        AppBook::Prefix mPrefix = AppBook::Prefix::Debug;
         //using PrefixMap = std::map<AppBook::Prefix, std::string>;
         Util::String mText; ///< Local Text;
         int mIndent = 0;    ///< By 4 <spc>
@@ -404,6 +403,9 @@ public:
         std::string Title;
         std::string Filename;
         int          Mode;
+        std::string  DbName; ///< Name part of the SQLITE[3] Database File ( [.../]AppBook.Config.$DbName.sqlite3 ).
+        //std::string  DbPasswd;
+        
         //...
     };
     
