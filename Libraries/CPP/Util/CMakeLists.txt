@@ -30,6 +30,11 @@ IF( EXISTS "${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json" )
 			)
 ENDIF()
 
+if(PACKAGE_TESTS)
+    enable_testing()
+    include(googletest)
+    add_subdirectory(Tests)
+endif()
 
 #set_target_properties(${PROJECT_NAME}
 #        SOVERSION

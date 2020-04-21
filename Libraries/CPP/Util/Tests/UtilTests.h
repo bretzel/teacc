@@ -16,7 +16,7 @@ namespace teacc::Util
 /*!
  * @brief
  *
- * @todo Build a stacked Tests[Data] structure containing its own local diagnostics. :)
+ * @todo Build a stacked Diagnostics[Data] structure containing its own local diagnostics. :)
  */
  
 class UtilTests

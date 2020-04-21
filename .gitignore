@@ -287,11 +287,13 @@ __pycache__/
 *.odx.cs
 *.xsd.cs
 
-#Linux/KDevelop/Jetbrains
+#Linux/KDevelop/Jetbrains/googletest
 *.kdev4
 .kdev4/
 build/
 gnu_build/
 cmake-*
 .clangd/
+googletest/
+
 

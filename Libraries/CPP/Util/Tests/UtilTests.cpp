@@ -60,7 +60,7 @@ Expect<> UtilTests::TestAppBook()
     
     
     AppBook::Config() ={
-        "Teacc :: Util :: Tests.",
+        "Teacc :: Util :: Diagnostics.",
         "UtilTests.log",
         AppBook::Ansi
     };
@@ -92,7 +92,7 @@ Expect<> UtilTests::Run(int argc, char **argv)
     DiagnosticData &Dia = mDiagnostics.back();
     
     
-    Init(argc, argv); // E is expected to be "false";
+    (void)Init(argc, argv);
     TestAppBook();
     TestString();
     
@@ -119,7 +119,7 @@ Expect<> UtilTests::TestString()
     mDiagnostics.push_back({"String"});
     DiagnosticData &Dia = mDiagnostics.back();
     
-    String Str = "Hello, World!\n ==> This is the VeryFirst of the %s Tests!\n----------------------------------------------------------\n";
+    String Str = "Hello, World!\n ==> This is the VeryFirst of the %s Diagnostics!\n----------------------------------------------------------\n";
     Str << " teacc::Util Library";
     std::cout << Str();
     
