@@ -17,6 +17,7 @@
 #include <stack>
 #include <fstream>
 #include <functional>
+#include <map>
 
 
 // init text attributes/style for type/class of messages:
@@ -364,6 +365,7 @@ public:
         Log* mParent = nullptr;
         Log* mChild = nullptr;
         AppBook::Prefix mPrefix = AppBook::Prefix::Debug;
+        //using PrefixMap = std::map<AppBook::Prefix, std::string>;
         Util::String mText; ///< Local Text;
         int mIndent = 0;    ///< By 4 <spc>
         //...

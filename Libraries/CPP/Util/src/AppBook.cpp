@@ -30,10 +30,10 @@ AppBook &AppBook::Init(/* ... */)
     AppBook::mStaticInstance->mComponentData = {
         {TextCtl::Reset   ,"\033[0m"},
 //        {TextCtl::Italic  ,""},
-        {TextCtl::Sup     ,""},
-        {TextCtl::Sub     ,""},
-        {TextCtl::Code    ,""},
-        {TextCtl::EndCode ,""},
+        {TextCtl::Sup     ,"<sup>"},
+        {TextCtl::Sub     ,"</sup>"},
+        {TextCtl::Code    ,"<code>"},
+        {TextCtl::EndCode ,"</code>"},
 //        {TextCtl::Pre     ,""},
 //        {TextCtl::EndPre  ,""},
         {TextCtl::Eol     ,"\n"}
@@ -78,14 +78,14 @@ AppBook::Log &AppBook::Begin(AppBook::Prefix Prefix_)
 std::string AppBook::ToStr(AppBook::Prefix Prefix_)
 {
     std::map<AppBook::Prefix, std::string> _ = {
-        {AppBook:: Debug    ,"➤ Debug"},
-        {AppBook:: Info     ,"⚫ Info"},
-        {AppBook:: Error    ,"✘ Error"},
-        {AppBook:: Warning  ,"⚑⚠ Warning"},
-        {AppBook:: Exception,"⚡ Exception"},
-        {AppBook:: Fatal    ,"☠ Fatal"},
-        {AppBook:: Success  ,"✔ Success"},
-        {AppBook:: Notice   ,"✎ Notice"}
+        {AppBook:: Debug    ,"\x1b[38;5;245m➤Debug\x1b[0m"},
+        {AppBook:: Info     ,"\x1b[38;5;68m⚫Info\x1b[0m"},
+        {AppBook:: Error    ,"\x1b[38;5;52m✘Error\x1b[0m"},
+        {AppBook:: Warning  ,"\x1b[38;5;100m⚠Warning\x1b[0m"},
+        {AppBook:: Exception,"\x1b[38;5;177m⚡Exception\x1b[0m"},
+        {AppBook:: Fatal    ,"\x1b[38;5;52m☠Fatal\x1b[0m"},
+        {AppBook:: Success  ,"\x1b[38;5;46m✔Success\x1b[0m"},
+        {AppBook:: Notice   ,"\x1b[38;5;71m✎Notice\x1b[0m"}
     };
     return _[Prefix_];
 }
@@ -107,9 +107,10 @@ std::string AppBook::Text()
 
 AppBook::Log &AppBook::Log::operator<<(AppBook::Prefix Prefix_)
 {
-    mText << AppBook::ToStr(Prefix_);
+    mText << "%-30s" << AppBook::ToStr(Prefix_);
     return *this;
 }
+
 
 AppBook::Log &AppBook::Log::operator<<(teacc::TextCtl C)
 {

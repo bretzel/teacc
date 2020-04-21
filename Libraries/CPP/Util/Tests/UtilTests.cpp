@@ -67,13 +67,18 @@ Expect<> UtilTests::TestAppBook()
     AppBook::Init();
     AppBook::Log& Log = AppBook::Begin(AppBook::Info);
     
-    Log
-        << Color::BlueViolet
-        << "Hello!"
+    Log <<" Info Prefix" << Log.Endl();
+    Log << Color::Orange1
+        << "Hello! (in Color::Orange1)."
         << TextCtl::Reset
         << Log.Endl();
+    Log << AppBook::Debug << " Debug Prefix" << TextCtl::Reset << Log.Endl();
+    Log << AppBook::Warning << " Warning Prefix" << TextCtl::Reset << Log.Endl();
+    Log << AppBook::Notice << " Notice Prefix" << TextCtl::Reset << Log.Endl();
+    Log << AppBook::Error << " Error Prefix" << TextCtl::Reset << Log.Endl();
+    Log << AppBook::Exception << " Exception Prefix" << TextCtl::Reset << Log.Endl();
+    Log << AppBook::Success << " Success Prefix" << TextCtl::Reset << Log.Endl();
     
-    Log << Color::Grey100 << AppBook::Debug << " Hello AGAIN!" << TextCtl::Reset << Log.Endl();
     Log.End();
     
     std::cout << AppBook::Instance().Text();
