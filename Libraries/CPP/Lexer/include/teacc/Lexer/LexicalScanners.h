@@ -10,7 +10,7 @@
 #include <teacc/Util/Rem.h>
 #include <teacc/Lexer/TokenData.h>
 
-namespace teacc
+namespace teacc::Lexer
 {
 class LEXER_LIB LexicalScanners
 {
@@ -27,6 +27,7 @@ class LEXER_LIB LexicalScanners
         int Index();
         int L = -1;
         int Col = -1;
+        void Sync();
         std::string ScanToEol();
         std::string Line();
         std::string Mark();
