@@ -8,11 +8,27 @@
 #pragma once
 
 #include <teacc/Util/Rem.h>
-
-
+#include <map>
 
 namespace teacc
 {
+
+class TestBase{};
+
+template<typename T> class Test : public TestBase
+{
+    using Collection = std::map<std::string, TestBase*>;
+    T*  mClass = nullptr;
+    
+public:
+    Test() = default;
+    Test(const Test&) = default;
+    Test(Test&&) = default;
+    ~Test() = default;
+    
+};
+
+
 class Diagnostic
 {
     using Collection = std::vector<Diagnostic>;
