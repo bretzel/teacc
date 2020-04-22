@@ -9,12 +9,12 @@ SET(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 
 add_executable(Diagnostics.App ${SRCS})
-add_dependencies(Diagnostics.App Util Lexer) #sqlitedb logbook lexer)
+add_dependencies(Diagnostics.App Util Lexer)
 
-list(APPEND TEACC_INCLUDE_PATHS "${TEACC_ROOT}/Util/include" "${TEACC_ROOT}/Lexer/include")# "${TEACC_ROOT}/xdb/sqlite3/include""${XIO_ROOT}/interpreter/include")
+list(APPEND TEACC_INCLUDE_PATHS "${TEACC_ROOT}/Util/include" "${TEACC_ROOT}/Lexer/include")
 target_include_directories(Diagnostics.App PRIVATE  "$<BUILD_INTERFACE:${TEACC_INCLUDE_PATHS}>")
 
-target_link_libraries(Diagnostics.App ${CMAKE_DL_LIBS} Util Lexer)# sqlitedb logbook sqlite3 lexer interpreter)#journal grammar lexer utils sqlitedb)
+target_link_libraries(Diagnostics.App ${CMAKE_DL_LIBS} Util Lexer)
 target_compile_features("${PROJECT_NAME}" PUBLIC cxx_std_17)
 
 IF (EXISTS "${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json")
