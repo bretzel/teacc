@@ -446,6 +446,7 @@ std::string TokenData::LocationData::operator()()
         return std::string();
     return Text();
 }
+
 std::string TokenData::LocationData::Text()
 {
     if(Begin == nullptr)
