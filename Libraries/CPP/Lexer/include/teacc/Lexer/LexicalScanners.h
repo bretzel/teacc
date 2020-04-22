@@ -34,7 +34,8 @@ class LEXER_LIB LexicalScanners
         std::string Location();
         bool _F = false;
         Util::Rem::Int ScanTo(const char *SubStr_);
-    }_cursor;
+        Util::Expect<std::string> ScanString();
+    }mCursor;
     
     struct NumScanner
     {

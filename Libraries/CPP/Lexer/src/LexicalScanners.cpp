@@ -108,4 +108,24 @@ Util::Rem::Int LexicalScanners::InternalCursor::ScanTo(const char *SubStr_)
 {
     return Util::Rem::Int::Ok;
 }
+Util::Expect<std::string> LexicalScanners::InternalCursor::ScanString()
+{
+    const char* be = C;
+    char Quote_ = *be;
+    std::string Str;
+    while((be <= E) && (*be != Quote_))Str += *be++;
+    if((*be != Quote_) && (be > E))
+    {
+        Sync();
+        return (
+            Util::Rem::Save()
+            << Util::Rem::Type::Error << Util::Rem::Int::Eof
+            << " : Unterminated string constant:\n"
+            << Mark()
+        );
+    }
+    
+    return Str;
+}
+
 }
