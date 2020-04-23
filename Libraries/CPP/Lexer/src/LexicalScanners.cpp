@@ -5,9 +5,14 @@
 #include <teacc/Lexer/LexicalScanners.h>
 #include <cstring>
 
-namespace teacc::Lexer
+
+using teacc::Util::Rem;
+
+namespace teacc
 {
 
+namespace Lexer
+{
 
 #pragma region InternalCursor
 
@@ -19,9 +24,11 @@ namespace teacc::Lexer
  */
 bool LexicalScanners::InternalCursor::operator++()
 {
-    if(C>=E) return false;
+    if(C >= E)
+        return false;
     ++C;
-    while((C < E) && (!isalnum(*C))) ++C;
+    while((C < E) && (!isalnum(*C)))
+        ++C;
     return true;
 }
 
@@ -67,16 +74,17 @@ bool LexicalScanners::InternalCursor::Eof(const char *P)
 void LexicalScanners::InternalCursor::Sync()
 {
     L = 1;
-    const char* Pos_  = C;
-    while(C>B)
+    const char *Pos_ = C;
+    while(C > B)
     {
-        if((*Pos_ == '\n') || (*Pos_ == '\r')) ++L;
+        if((*Pos_ == '\n') || (*Pos_ == '\r'))
+            ++L;
         --C;
     }
     
     Pos_ = C;
     Col = 1;
-    while((C>B) && (*C != '\n') && (*C != '\r'))
+    while((C > B) && (*C != '\n') && (*C != '\r'))
     {
         --C;
         ++Col;
@@ -89,7 +97,7 @@ void LexicalScanners::InternalCursor::Sync()
  */
 int LexicalScanners::InternalCursor::Index()
 {
-    return C-B;
+    return C - B;
 }
 
 /*!
@@ -99,7 +107,8 @@ int LexicalScanners::InternalCursor::Index()
 std::string LexicalScanners::InternalCursor::ScanToEol()
 {
     std::string Str;
-    while( (C <= E ) && (*C != '\n') && (*C != '\r')) Str += *C++;
+    while((C <= E) && (*C != '\n') && (*C != '\r'))
+        Str += *C++;
     return Str;
 }
 
@@ -111,14 +120,18 @@ std::string LexicalScanners::InternalCursor::Line()
 {
     std::string Str;
     
-    const char* lb, *eb;
+    const char *lb, *eb;
     lb = eb = C;
-    while((lb>B) && (*lb!='\r') && (*lb != '\n')) --lb;
-    if(lb>B) ++lb;
-    while((eb<E) && (*eb != '\r') && (*eb != '\n')) ++eb;
+    while((lb > B) && (*lb != '\r') && (*lb != '\n'))
+        --lb;
+    if(lb > B)
+        ++lb;
+    while((eb < E) && (*eb != '\r') && (*eb != '\n'))
+        ++eb;
     --eb;
     
-    for(;lb<=eb; lb++) Str += *lb;
+    for(; lb <= eb; lb++)
+        Str += *lb;
     return Str;
 }
 
@@ -133,7 +146,8 @@ std::string LexicalScanners::InternalCursor::Mark()
 {
     Util::String Str = Line();
     Str << '\n';
-    for(int x=0; x<Col; x++) Str << ' ';
+    for(int x = 0; x < Col; x++)
+        Str << ' ';
     Str << '^';
     return Str();
 }
@@ -149,34 +163,35 @@ std::string LexicalScanners::InternalCursor::Location()
     return Str();
 }
 
+void LexicalScanners::Append(TokenData &Token_)
+{
+    // Consume the Cursor the length of the Token [text] Attribute.
+    //...
+    mConfig.mTokensCollection->push_back(Token_);
+}
 
 /*!
  * @brief Advances/Consumes the C pointer to Skip till SubStr_ match.
  * @param SubStr_
  * @return Expect code.
  */
-Util::Rem::Int LexicalScanners::InternalCursor::ScanTo(const char *SubStr_)
+Rem::Int LexicalScanners::InternalCursor::ScanTo(const char *SubStr_)
 {
     
     return Util::Rem::Int::Ok;
 }
 
-
-Util::Expect<std::string> LexicalScanners::InternalCursor::ScanString()
+teacc::Util::Expect<std::string> LexicalScanners::InternalCursor::ScanString()
 {
-    const char* be = C;
+    const char *be = C;
     char Quote_ = *be;
     std::string Str;
-    while((be <= E) && (*be != Quote_))Str += *be++;
+    while((be <= E) && (*be != Quote_))
+        Str += *be++;
     if((*be != Quote_) && (be > E))
     {
         Sync();
-        return (
-            Util::Rem::Save()
-            << Util::Rem::Type::Error << Util::Rem::Int::Eof
-            << " : Unterminated string constant:\n"
-            << Mark()
-        );
+        return (Util::Rem::Save() << Util::Rem::Type::Error << Util::Rem::Int::Eof << " : Unterminated string constant:\n" << Mark());
     }
     Str += *be; // Include the rhs Quote.
     return Str;
@@ -185,17 +200,17 @@ Util::Expect<std::string> LexicalScanners::InternalCursor::ScanString()
 LexicalScanners::InternalCursor::InternalCursor(const char *Source_)
 {
     C = Source_;
-    E = C + std::strlen(C) -1;
+    E = C + std::strlen(C) - 1;
     B = C;
     L = Col = 1;
 }
-
 
 #pragma endregion InternalCursor
 
 //---------------------------------------------------------------------------------------------------------------------------
 #pragma region NumSCanner
-LexicalScanners::NumScanner::NumScanner(const char *_c, const char *_eos): B(_c), E(_eos), Eos(_eos){}
+LexicalScanners::NumScanner::NumScanner(const char *_c, const char *_eos) : B(_c), E(_eos), Eos(_eos)
+{}
 
 /*!
  * @brief For now a bare minimum digit with some rough floating point scan.
@@ -220,7 +235,6 @@ bool LexicalScanners::NumScanner::operator++(int)
     return true;
 }
 
-
 /*!
  * @brief Implements boolean operator
  * @return true if this NumScanner was  a valid numeric sequence, false otherwise.
@@ -242,15 +256,14 @@ Type::T LexicalScanners::NumScanner::operator()()
     if(!Real)
     {
         Util::String Str;
-        Str = Str.MakeStr(C,E);
+        Str = Str.MakeStr(C, E);
         uint64_t D;
         Str >> D;
         uint64_t I = 0;
-        std::array<uint64_t,3> R = {0x100,0x10000,0x100000000};
-        while(D >= R[I]) ++I;
-        std::array<Type::T,4> Cap = {
-            Type::u8, Type::u16, Type::u32, Type::u64
-        };
+        std::array<uint64_t, 3> R = {0x100, 0x10000, 0x100000000};
+        while(D >= R[I])
+            ++I;
+        std::array<Type::T, 4> Cap = {Type::u8, Type::u16, Type::u32, Type::u64};
         return Cap[I];
     }
     
@@ -260,22 +273,16 @@ Type::T LexicalScanners::NumScanner::operator()()
 
 #pragma endregion NumSCanner
 
-
 #pragma region Scanners
 
-
-using Util::Rem;
-
-
-Util::Expect<std::size_t> LexicalScanners::Scan()
+teacc::Util::Expect<std::size_t> LexicalScanners::Scan()
 {
     if((!mConfig.mSource) || (!mConfig.mTokensCollection))
-        return (
-            Rem::Save() << Rem::Type::Error << " :-> " << Rem::Int::UnExpected << " nullptr on Source Text or Tokens Collection Stream."
-        );
-    Util::Expect<> Number(TokenData&);
+        return (Rem::Save() << Rem::Type::Error << " :-> " << Rem::Int::UnExpected << " nullptr on Source Text or Tokens Collection Stream.");
+    
     mCursor = InternalCursor(mConfig.mSource);
-    Util::Expect<> R;
+    
+    Return R;
     
     while(mCursor.Eof())
     {
@@ -296,29 +303,21 @@ Util::Expect<std::size_t> LexicalScanners::Scan()
         else // [Pre]Analyse further
         {
             ///@todo Place to the lexical analyzers map!
-//            return (
-//                Rem::Save() <<
-//                Rem::Type::Message <<
-//                Rem::Int::Implement << ": " <<
-//                " Lexical Analyzers are not yet defined :" <<
-//                Token_.Mark()
-//            );
+            //            return (
+            //                Rem::Save() <<
+            //                Rem::Type::Message <<
+            //                Rem::Int::Implement << ": " <<
+            //                " Lexical Analyzers are not yet defined :" <<
+            //                Token_.Mark()
+            //            );
             ;
         }
-        return (
-                Rem::Save() <<
-                Rem::Type::Message <<
-                Rem::Int::Implement << ": " <<
-                " Lexical Analyzers are not yet defined :" <<
-                Token_.Mark()
-        );
+        return (Rem::Save() << Rem::Type::Message << Rem::Int::Implement << ": " << " Lexical Analyzers are not yet defined :" << Token_.Mark());
     }
     return static_cast<std::size_t>(Rem::Int::Rejected);
 }
 
-
-
-Util::Expect<> LexicalScanners::Number(TokenData& Token_)
+LexicalScanners::Return LexicalScanners::Number(TokenData &Token_)
 {
     NumScanner Num_ = {mCursor.C, mCursor.E};
     while(Num_++);
@@ -330,29 +329,17 @@ Util::Expect<> LexicalScanners::Number(TokenData& Token_)
     // Update data : (Token_ and mCursor)
     mCursor.Sync();
     Type::T S = Num_();
-    Token_ = {
-        Lexem::Mnemonic::noop,
-        S,
-        Type::number | S,
-        Delta::identifier,
-        {Num_.B, Num_.E, mCursor.L, mCursor.Col, mCursor.Index()},
-        {1,0,0},
-        nullptr
-    };
+    Token_ = {Lexem::Mnemonic::noop, S, Type::number | S, Delta::identifier, {Num_.B, Num_.E, mCursor.L, mCursor.Col, mCursor.Index()}, {1, 0, 0}, nullptr};
     // ...
     Append(Token_);
     return Rem::Int::Accepted;
 }
 
+LexicalScanners::Return LexicalScanners::Identifier(TokenData &)
+{
+    return Util::Expect<>();
+}
 
 #pragma endregion Scanners
 
-void LexicalScanners::Append(TokenData &Token_)
-{
-    // Consume the Cursor the length of the Token [text] Attribute.
-    //...
-    mConfig.mTokensCollection->push_back(Token_);
-}
-
-
-}
+}}

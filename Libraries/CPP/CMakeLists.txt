@@ -5,7 +5,7 @@ project(Util VERSION 0.1.0 LANGUAGES CXX)
 set(FrameWorkName "teacc")
 
 option(BUILD_UTIL "Enable building Utility library" ON)
-option(BUILD_DBE "Enable building the SQLIte3 Database support  Library" ON)
+option(BUILD_DBE "Enable building the SQLIte3 Database support  Library" OFF)
 option(BUILD_LEXER "Enable building the Lexer & Tokens Library" ON)
 option(BUILD_TDD "Enable building tdd" OFF)
 option(BUILD_INTERPRETER "Enable building the teacc interpreter" OFF)

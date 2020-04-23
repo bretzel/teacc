@@ -73,14 +73,14 @@ class LEXER_LIB LexicalScanners
     };
 
 public:
-    struct ConfigData
+    struct LEXER_LIB ConfigData
     {
         const char *mSource                          = nullptr;
         TokenData::Collection*  mTokensCollection    = nullptr;
     };
     
     using ReturnData = Util::Expect<LexicalScanners::ConfigData>;
-    
+    using Return     = Util::Expect <> ;
     LexicalScanners()                       = default;
     LexicalScanners(const LexicalScanners&) = default;
     LexicalScanners(LexicalScanners&&)      = default;
@@ -99,10 +99,11 @@ private:
     void Append(TokenData& Token_);
     
     #pragma region Scanners
-    Util::Expect<> Number(TokenData&);
-    Util::Expect<> Identifier(TokenData&);
     
+    LexicalScanners::Return  Number(TokenData&);
+    LexicalScanners::Return Identifier(TokenData&);
     
+    #pragma endregion Scanners
     
 };
 }
