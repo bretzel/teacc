@@ -35,14 +35,21 @@ class LEXER_LIB LexicalScanners
         bool _F = false;
         Util::Rem::Int ScanTo(const char *SubStr_);
         Util::Expect<std::string> ScanString();
+        
+        InternalCursor(const char* Source_);
     }mCursor;
     
+    /*!
+     * @brief Numeric litteral scanner.
+     *
+     * @note Bare scan as of the current version.
+     */
     struct NumScanner
     {
-        const char* B;
-        const char* E;
-        const char* C;
-        const char* Eos;
+        const char* B = nullptr;
+        const char* E = nullptr;
+        const char* C = nullptr;
+        const char* Eos = nullptr;
         bool  Real = false;
         
         bool  Literal = true; ///< scan literal digits - do not validate hexadecimal...
@@ -52,11 +59,6 @@ class LEXER_LIB LexicalScanners
             None, Bin, Oct,Dec,Hex,/* ..., */ //  FUCK!!!
         }Num = None;
 
-        enum State
-        {
-            Good, Bad
-        }St_ = State::Bad;
-        
         
         NumScanner() = default;
         NumScanner(const char* _c, const char* _eos);
@@ -65,11 +67,8 @@ class LEXER_LIB LexicalScanners
         
         //bool operator++();
         bool operator++(int);
-        bool Ok(bool l);
-        operator bool () { return (St_==Good) || (C>B); }
-        State UpdateState();
-        
-        NumScanner::NumBase NumericBase();
+
+        explicit operator bool ();
         Type::T operator()();
     };
 
@@ -85,13 +84,25 @@ public:
     LexicalScanners()                       = default;
     LexicalScanners(const LexicalScanners&) = default;
     LexicalScanners(LexicalScanners&&)      = default;
-    ~LexicalScanners();
+    /*!
+     * @brief nothing to do as of this version.
+     */
+    ~LexicalScanners()                      = default;
     
     ConfigData& Config() { return mConfig; }
     
+    Util::Expect<std::size_t> Scan();
     
 private:
     ConfigData mConfig;
+    
+    void Append(TokenData& Token_);
+    
+    #pragma region Scanners
+    Util::Expect<> Number(TokenData&);
+    Util::Expect<> Identifier(TokenData&);
+    
+    
     
 };
 }

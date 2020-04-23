@@ -130,6 +130,8 @@ std::string Rem::ToStr(Rem::Int C)
         {Rem::Int::Unset,   "Unset"},
         {Rem::Int::UnInit,  "UnInit"},
         {Rem::Int::Implement, "Not Implemented"},
+        {Rem::Int::Accepted, "Accepted"},
+        {Rem::Int::Rejected, "Rejected"},
     };
     
     return _[C];

@@ -41,7 +41,9 @@ public:
         Known,
         Unset,
         UnInit,
-        Implement
+        Implement,
+        Accepted,
+        Rejected
     };
     
     enum class Type : uint8_t
