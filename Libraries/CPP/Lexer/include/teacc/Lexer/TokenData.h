@@ -66,7 +66,6 @@ struct LEXER_LIB TokenData
     std::string TypeName();
     
     static TokenData Scan(const char* C_);
-    
     static std::string Str(Type::T Type_);
     static Type::T     Int(const std::string&);
     

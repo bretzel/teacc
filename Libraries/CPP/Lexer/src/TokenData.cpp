@@ -402,7 +402,8 @@ TokenData TokenData::Scan(const char *C_)
          * I arbitrary assume that the UNICODE UNIT is a signed 16 bits AND THAT THE VALUE OF FIRST BYTE IS NEGATIVE.
          * Then I take the next byte to determine the unicode ...code...
          */
-        while((*crs && *rtxt) && (*crs == *rtxt)) {
+        while((*crs && *rtxt) && (*crs == *rtxt))
+        {
             ////std::cout << *crs <<  *rtxt << ">>>";
             if(*crs < 0)
                 ++unicode;
@@ -411,18 +412,15 @@ TokenData TokenData::Scan(const char *C_)
             ////std::cout << *crs << *rtxt << ',';
         }
         
-        if(*rtxt == 0) {
-            ////std::cout << "\nDebug Trace - TokenUnit::Scan: rtxt=[" << Tok.mLoc.b << "]\n";
-            if((*crs && (isalnum(*(crs)))) && (Tok.S & Type::keyword) && !(Tok.S & Type::oper) && !(Tok.T == Type::hex))
-                continue;
-            
+        if(*rtxt == 0)
+        {
+            if((*crs && (isalnum(*(crs)))) &&(Tok.S & Type::keyword) && !(Tok.S & Type::oper) && (Tok.T != Type::hex)) continue;
             Tok.mLoc.Begin = C_;
-            Tok.mLoc.End = Tok.mLoc.Begin + sz - 1;
-            //--------------------------------------------------------
+            Tok.mLoc.End = Tok.mLoc.Begin + (crs-C_);
             return Tok;
         }
     }
-    return TokenData::mNull;
+    return TokenData();
 }
 
 Type::T TokenData::Int(const std::string &Str_)
