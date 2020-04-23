@@ -13,25 +13,38 @@
 namespace teacc
 {
 
-class TestBase{};
+class TestBase
+{
+    virtual Util::Expect<> Run(Util::String::Collection Args_) = 0;
+};
+
+
 
 template<typename T> class Test : public TestBase
 {
     using Collection = std::map<std::string, TestBase*>;
     T*  mClass = nullptr;
-    
+    Util::String::Collection mArgs;
 public:
     Test() = default;
     Test(const Test&) = default;
     Test(Test&&) = default;
     ~Test() = default;
     
+    Util::Expect<> Run(Util::String::Collection Args_) override
+    {
+        mArgs = std::move(Args_);
+        return Util::Rem::Int::Implement;
+    }
+    
 };
 
 
 class Diagnostic
 {
-    using Collection = std::vector<Diagnostic>;
+    using Collection = std::vector<TestBase*>;
+    
+    
     std::string mName;
 public:
     // -- Let's see and learn:
