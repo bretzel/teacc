@@ -25,5 +25,5 @@ IF (EXISTS "${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json")
 ENDIF ()
 
 
-install(TARGETS UtilTests.app RUNTIME DESTINATION bin)
+install(TARGETS Diagnostics.App RUNTIME DESTINATION bin)
 

@@ -15,6 +15,7 @@ namespace teacc
 
 class TestBase
 {
+public:
     virtual Util::Expect<> Run(Util::String::Collection Args_) = 0;
 };
 
@@ -44,7 +45,7 @@ class Diagnostic
 {
     using Collection = std::vector<TestBase*>;
     
-    
+    Collection mTests;
     std::string mName;
 public:
     // -- Let's see and learn:
@@ -58,7 +59,7 @@ public:
     Diagnostic(std::string Name_);
     ~Diagnostic();
     
-    Util::Expect <> Run();
+    Util::Expect <> Run(Util::String::Collection Args_);
     
     
     

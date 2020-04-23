@@ -18,8 +18,15 @@ Diagnostic::~Diagnostic()
     mName.clear();
 }
 
-Expect<> Diagnostic::Run()
+Expect<> Diagnostic::Run(Util::String::Collection Args_)
 {
+    for(auto* Test_ : mTests)
+    {
+        ///@todo Open Output.
+        Test_->Run(Args_);
+        ///@todo Close Output.
+    }
+    
     return Rem::Int::Implement;
 }
 
