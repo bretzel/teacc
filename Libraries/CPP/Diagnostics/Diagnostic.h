@@ -22,6 +22,7 @@ class Test
     using Collection = std::map<std::string, Test*>;
     String::Collection mArgs;
     std::string mName;
+    friend class Diagnostic;
 public:
     Test() = default;
     Test(std::string Name_);
@@ -29,16 +30,16 @@ public:
     Test(Test&&) = default;
     ~Test() = default;
     
+    std::string Name() { return mName; }
     virtual Expect<> Run() = 0;
 };
 
 
 class Diagnostic
 {
-    using Collection = std::vector<Test*>;
-    
-    Collection mTests;
-    String::Collection mTestsName;
+    Test::Collection mTests; ///< Reference Tests
+    std::stack<Test*> mToRun; ///< Stacked Tests
+    String::Collection mTestsNameToRun;
     std::string mName;
     std::size_t Init();
     

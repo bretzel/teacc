@@ -9,8 +9,8 @@ namespace Diag
 Expect<> Diag::UtilTests::Run()
 {
     (void)TestStringWords();
-    (void)TestAppBook();
     //...
+    return TestAppBook();
 }
 
 
@@ -32,6 +32,6 @@ teacc::Util::Expect<> Diag::UtilTests::TestAppBook()
         Rem::Int::Implement << " (Also testing Rem & Expect) ... "
     );
 }
-
+UtilTests::UtilTests(std::string Name_) : Test(Name_) {}
 
 }

@@ -22,6 +22,8 @@ class UtilTests : public Test
     Expect<> TestAppBook();
     
 public:
+    UtilTests(std::string Name_);
+    
     Expect<> Run() override;
 };
 

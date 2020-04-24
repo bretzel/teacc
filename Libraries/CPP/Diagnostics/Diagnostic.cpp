@@ -22,21 +22,26 @@ Diagnostic::~Diagnostic()
 
 Expect<> Diagnostic::Run(String::Collection Args_)
 {
-    mTestsName = std::move(Args_);
+    mTestsNameToRun = std::move(Args_);
     Init();
     Expect<> R;
-    for(auto *Test_ : mTests)
+    while(!mToRun.empty())
     {
         ///@todo Open Output.
-        if((R = Test_->Run())
+        Test* Test_ = mToRun.top();
+        if((R = Test_->Run()))
         {
-            Rem::Save() << Test_.Name() << ":-> " << Rem::ToStr(*R);
+            Rem::Save() << Test_->Name() << ":-> " << Rem::ToStr(*R);
         }
-        
+        else
+            R = (
+                Rem::Save() << Test_->Name() << ":-> " << R()()
+            );
         ///@todo Close Output.
+        mToRun.pop();
     }
     
-    return Rem::Int::Implement;
+    return Rem::Int::Ok;
 }
 
 
@@ -46,19 +51,42 @@ Expect<> Diagnostic::Run(String::Collection Args_)
  */
 std::size_t Diagnostic::Init()
 {
-    for(auto Name : mNames)
+    mTests = {
+        {"Util", new UtilTests("Util")}
+    };
+    
+    std::cout << "Stacking:\n";
+    int C = 0;
+    for(auto Name : mTestsNameToRun)
+    {
+        if(C++)
+        {
+            std::cout << "Test #" << C-1 << " :[" << Name << "]\n";
+            mToRun.push(mTests[Name]);
+        }
+        
+        
+    }
+    
+    return mToRun.size();
 }
 
-auto main(int arc, char **argv)->int
+
+Test::Test(std::string Name_): mName(std::move(Name_)){}
+
+}//namespace Diag;
+
+
+auto main(int argc, char **argv)->int
 {
+    Diag::Diagnostic D = {"teacc"};
+    teacc::Util::String::Collection Args = teacc::Util::String::ArgsArray(argc,argv);
+    D.Run(Args);
+    teacc::Util::Rem::Clear([](teacc::Util::Rem& R)
+    {
+        std::cout << R() << '\n';
+    }
+    );
     return 0;
 }
 
-
-Test::Test(std::string Name_): mName(std::move(Name_))
-{
-
-}
-
-
-}
