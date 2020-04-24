@@ -50,6 +50,7 @@ public:
     {
         None = 0,
         Info,
+        Internal,
         Error,
         SyntaxError,
         Warning,

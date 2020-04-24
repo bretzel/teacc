@@ -5,32 +5,60 @@
 
 #include "Diagnostic.h"
 
-#include <teacc/Util/String.h>
+#include "UtilTests.h"
 
-using namespace teacc;
-using Util::Rem;
-using Util::Expect;
 
-Diagnostic::Diagnostic(std::string Name_):mName(std::move(Name_)){}
+
+namespace Diag
+{
+
+Diagnostic::Diagnostic(std::string Name_) : mName(std::move(Name_))
+{}
 
 Diagnostic::~Diagnostic()
 {
     mName.clear();
 }
 
-Expect<> Diagnostic::Run(Util::String::Collection Args_)
+Expect<> Diagnostic::Run(String::Collection Args_)
 {
-    for(auto* Test_ : mTests)
+    mTestsName = std::move(Args_);
+    Init();
+    Expect<> R;
+    for(auto *Test_ : mTests)
     {
         ///@todo Open Output.
-        Test_->Run(Args_);
+        if((R = Test_->Run())
+        {
+            Rem::Save() << Test_.Name() << ":-> " << Rem::ToStr(*R);
+        }
+        
         ///@todo Close Output.
     }
     
     return Rem::Int::Implement;
 }
 
-auto main(int arc, char**argv) -> int
+
+/*!
+ * @brief Create and Initialize the tests by the names given in the Args_ Collection.
+ * @return
+ */
+std::size_t Diagnostic::Init()
+{
+    for(auto Name : mNames)
+}
+
+auto main(int arc, char **argv)->int
 {
     return 0;
+}
+
+
+Test::Test(std::string Name_): mName(std::move(Name_))
+{
+
+}
+
+
 }

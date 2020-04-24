@@ -10,43 +10,38 @@
 #include <teacc/Util/Rem.h>
 #include <map>
 
-namespace teacc
+namespace Diag
 {
 
-class TestBase
+using namespace teacc::Util;
+
+
+
+class Test
 {
-public:
-    virtual Util::Expect<> Run(Util::String::Collection Args_) = 0;
-};
-
-
-
-template<typename T> class Test : public TestBase
-{
-    using Collection = std::map<std::string, TestBase*>;
-    T*  mClass = nullptr;
-    Util::String::Collection mArgs;
+    using Collection = std::map<std::string, Test*>;
+    String::Collection mArgs;
+    std::string mName;
 public:
     Test() = default;
+    Test(std::string Name_);
     Test(const Test&) = default;
     Test(Test&&) = default;
     ~Test() = default;
     
-    Util::Expect<> Run(Util::String::Collection Args_) override
-    {
-        mArgs = std::move(Args_);
-        return Util::Rem::Int::Implement;
-    }
-    
+    virtual Expect<> Run() = 0;
 };
 
 
 class Diagnostic
 {
-    using Collection = std::vector<TestBase*>;
+    using Collection = std::vector<Test*>;
     
     Collection mTests;
+    String::Collection mTestsName;
     std::string mName;
+    std::size_t Init();
+    
 public:
     // -- Let's see and learn:
     Diagnostic() = default;
@@ -59,12 +54,8 @@ public:
     Diagnostic(std::string Name_);
     ~Diagnostic();
     
-    Util::Expect <> Run(Util::String::Collection Args_);
+    Expect <> Run(String::Collection Names_);
     
-    
-    
-
-
 };
 }
 

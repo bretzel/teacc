@@ -97,6 +97,7 @@ std::string Rem::ToStr(Rem::Type T)
     std::map<Rem::Type, std::string> _ = {
         {Rem::Type::None,    "None"},
         {Rem::Type::Info,    "Info"},
+        {Rem::Type::Internal,"Internal"},
         {Rem::Type::Error,   "Error"},
         {Rem::Type::SyntaxError, "Syntax Error"},
         {Rem::Type::Warning, "Warning"},
