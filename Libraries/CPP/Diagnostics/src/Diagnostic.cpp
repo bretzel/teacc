@@ -3,9 +3,8 @@
 //
 
 
-#include "Diagnostic.h"
-
-#include "UtilTests.h"
+#include "../include/teacc/Diagnostics/Diagnostic.h"
+#include "../UtilTests.h"
 
 
 
@@ -35,7 +34,6 @@ Expect<> Diagnostic::Run(String::Collection Args_)
         ///@todo Close Output.
         mToRun.pop();
     }
-    
     return Rem::Int::Ok;
 }
 
@@ -44,25 +42,31 @@ Expect<> Diagnostic::Run(String::Collection Args_)
  * @brief Create and Initialize the tests by the names given in the Args_ Collection.
  * @return
  */
-std::size_t Diagnostic::Init()
+std::size_t Diagnostic::Init(Diagnostic::TestCreateFn Fn)
 {
-    mTests = {
-        {"Util", new UtilTests("Util")}
-    };
+//    mTests = {
+//        {"Util", new UtilTests("Util")}
+//    };
     
     std::cout << "Stacking:\n";
+    if(!Fn)
+    {
+        Rem::Save() << __PRETTY_FUNCTION__ << "\n" << Rem::Type::Fatal << ": No Test-Instanciate function was provided.\nDiagnostics Tests aborted.";
+        return 0;
+    }
+    
     int C = 0;
     for(auto Name : mTestsNameToRun)
     {
         if(C++)
         {
             std::cout << "Test #" << C-1 << " :[" << Name << "]\n";
-            if(mTests[Name])
-                mToRun.push(mTests[Name]);
+            if(Fn)
+                mToRun.push(mTests[Name] = Fn(Name));
             else
                 Rem::Save() << Rem::Type::Error <<
-                Rem::Int::Unknown << " Test identified by '" <<
-                Name << "' :-> It was ignored.";
+                Rem::Int::Bad << " Name: Test identified by '" <<
+                Name << "' was rejected.";
         }
     }
     
@@ -74,17 +78,4 @@ Test::Test(std::string Name_): mName(std::move(Name_)){}
 
 }//namespace Diag;
 
-
-auto main(int argc, char **argv)->int
-{
-    Diag::Diagnostic D = {"teacc"};
-    teacc::Util::String::Collection Args = teacc::Util::String::ArgsArray(argc,argv);
-    D.Run(Args);
-    teacc::Util::Rem::Clear([](teacc::Util::Rem& R)
-    {
-        std::cout << R() << '\n';
-    }
-    );
-    return 0;
-}
 

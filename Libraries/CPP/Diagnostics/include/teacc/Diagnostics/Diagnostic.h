@@ -2,28 +2,37 @@
 // Created by bretzel on 20-04-21.
 //
 
-//#ifndef UTIL_DIAGNOSTIC_H
-//#define UTIL_DIAGNOSTIC_H
 
 #pragma once
-
+#include <teacc/Diagnostics/Lib.h>
 #include <teacc/Util/Rem.h>
 #include <map>
+
+using namespace teacc::Util;
 
 namespace Diag
 {
 
-using namespace teacc::Util;
 
-
-
-class Test
+class DIAGNOSTIC_LIB Test
 {
     using Collection = std::map<std::string, Test*>;
     String::Collection mArgs;
     std::string mName;
     friend class Diagnostic;
 public:
+    
+    struct DiagnosticData
+    {
+        using Collection = std::vector<DiagnosticData>;
+        using Iterator   = Collection::iterator;
+        
+        std::string mName;
+        Expect<> mResult = Rem::Int::Unset;
+        
+        std::string operator()();
+    };
+    
     Test() = default;
     Test(std::string Name_);
     Test(const Test&) = default;
@@ -35,15 +44,22 @@ public:
 };
 
 
-class Diagnostic
+class DIAGNOSTIC_LIB Diagnostic
 {
     Test::Collection mTests; ///< Reference Tests
     std::stack<Test*> mToRun; ///< Stacked Tests
     String::Collection mTestsNameToRun;
     std::string mName;
-    std::size_t Init();
+    
+protected:
+    
+    using TestCreateFn = std::function<Test*(std::string)>;
+    
+    std::size_t Init(Diagnostic::TestCreateFn Fn = nullptr);
     
 public:
+    
+    
     // -- Let's see and learn:
     Diagnostic() = default;
     Diagnostic(const Diagnostic&) = default;
@@ -60,5 +76,3 @@ public:
 };
 }
 
-
-//#endif //UTIL_DIAGNOSTIC_H

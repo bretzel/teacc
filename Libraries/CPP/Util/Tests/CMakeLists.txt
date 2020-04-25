@@ -14,9 +14,9 @@ SET(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 #add_dependencies(tdd journal grammar lexer utils)
 
 add_executable(UtilTests.app ${SRCS})
-add_dependencies(UtilTests.app Util ) #sqlitedb logbook lexer)
+add_dependencies(UtilTests.app Util Diagnostics ) #sqlitedb logbook lexer)
 
-list(APPEND TEACC_INCLUDE_PATHS "${CMAKE_CURRENT_SOURCE_DIR}/include" "${TEACC_ROOT}/Util/include")# "${TEACC_ROOT}/xdb/sqlite3/include" "${XIO_ROOT}/lexer/include" "${XIO_ROOT}/interpreter/include")
+list(APPEND TEACC_INCLUDE_PATHS "${CMAKE_CURRENT_SOURCE_DIR}/include" "${TEACC_ROOT}/Util/include" "${TEACC_ROOT}/Diagnostics/include")# "${TEACC_ROOT}/xdb/sqlite3/include" "${XIO_ROOT}/lexer/include" "${XIO_ROOT}/interpreter/include")
 target_include_directories(UtilTests.app PUBLIC
         "$<BUILD_INTERFACE:${TEACC_INCLUDE_PATHS}>"
         )

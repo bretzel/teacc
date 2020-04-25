@@ -7,9 +7,10 @@
 
 #pragma once
 
-#include <teacc/Util/Rem.h>
+#include <teacc/Diagnostics/Diagnostic.h>
 
-namespace teacc::Util
+
+namespace teacc::Dia
 {
 
 
@@ -19,7 +20,7 @@ namespace teacc::Util
  * @todo Build a stacked Diagnostics[Data] structure containing its own local diagnostics. :)
  */
  
-class UtilTests
+class Tests
 {
     struct DiagnosticData
     {

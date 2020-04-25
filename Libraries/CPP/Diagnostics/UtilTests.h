@@ -6,7 +6,7 @@
 //#define UTIL_UTILTESTS_H
 
 #pragma once
-#include "Diagnostic.h"
+#include "include/teacc/Diagnostics/Diagnostic.h"
 #include <teacc/Util/String.h>
 
 namespace Diag
