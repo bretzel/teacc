@@ -18,8 +18,7 @@ Expect<> UtilTests::TestStringWords()
 {
     return (
         Rem::Save() <<
-        Rem::Type::Internal << ": " <<
-        Rem::Int::Implement << " (Also testing Rem & Expect) ... "
+        Rem::Type::Internal << ": " << " [Test]Util: 'String::Words' :" << Rem::Int::Implement
     );
 }
 
@@ -28,8 +27,7 @@ teacc::Util::Expect<> Diag::UtilTests::TestAppBook()
 {
     return (
         Rem::Save() <<
-        Rem::Type::Internal << ": " <<
-        Rem::Int::Implement << " (Also testing Rem & Expect) ... "
+        Rem::Type::Internal << ": " << " [Test]Util: 'AppBook' :" << Rem::Int::Implement
     );
 }
 UtilTests::UtilTests(std::string Name_) : Test(Name_) {}

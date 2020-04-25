@@ -30,13 +30,8 @@ Expect<> Diagnostic::Run(String::Collection Args_)
         ///@todo Open Output.
         Test* Test_ = mToRun.top();
         if((R = Test_->Run()))
-        {
             Rem::Save() << Test_->Name() << ":-> " << Rem::ToStr(*R);
-        }
-        else
-            R = (
-                Rem::Save() << Test_->Name() << ":-> " << R()()
-            );
+        
         ///@todo Close Output.
         mToRun.pop();
     }
@@ -62,10 +57,13 @@ std::size_t Diagnostic::Init()
         if(C++)
         {
             std::cout << "Test #" << C-1 << " :[" << Name << "]\n";
-            mToRun.push(mTests[Name]);
+            if(mTests[Name])
+                mToRun.push(mTests[Name]);
+            else
+                Rem::Save() << Rem::Type::Error <<
+                Rem::Int::Unknown << " Test identified by '" <<
+                Name << "' :-> It was ignored.";
         }
-        
-        
     }
     
     return mToRun.size();
