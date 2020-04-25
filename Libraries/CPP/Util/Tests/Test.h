@@ -10,9 +10,15 @@
 namespace teacc
 {
 
-class MyTest : public Diag::Test
+class String__TEST : public Diag::Test
 {
-
+    String::Word::Collection mWords;
+    
+public:
+    
+    Expect<> Run() override;
+    
+    
 };
 
 
