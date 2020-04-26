@@ -40,7 +40,7 @@ install(TARGETS ${TargetName}
 add_custom_command(TARGET ${TargetName} POST_BUILD
     COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${TargetName}
 
-        "--Test\\'Util::String::Words\\' /home/bretzel/.config"
+        "--Test\\'Util::String::Words\\' *"
         "--Test\\'Util::AppBook\\' --File=/home/bretzel/Applications/bin/logs/AppBook-Test.log"
 
     WORKING_DIRECTORY ${CMAKE_CURRENT_BIN_DIR}

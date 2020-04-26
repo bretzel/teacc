@@ -81,6 +81,7 @@ public:
     
 private:
     String::CIterator Seek(const std::string& Name_, const String::Collection& Args_);
+    std::size_t Map(String::Collection Args_);
 };
 }
 
