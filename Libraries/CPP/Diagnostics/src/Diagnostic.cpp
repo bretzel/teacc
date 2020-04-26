@@ -27,7 +27,18 @@ Expect<> Diagnostic::Run(String::Collection Args_)
         {
             Ti.second.mCmdLine = *CI;
             std::cout << Ti.second.mName << "\n    => Associated ArgumentLine[\x1b[1;32m" << Ti.second.mCmdLine << "\x1b[0m]\n";
+            
+            String Str = *CI;
+            String::Word::Collection Words;
+            std::cout << " Test: String::Words on CmdLineArg :";
+            std::size_t count = Str.Words(Words, String::DefaultSeparators(), true);
+            std::cout << count << " words:\n";
+            for(auto W : Words)
+            {
+                std::cout << "[" << W() << "]\n";
+            }
         }
+        std::cout << "--------------------------------------------------------------------------\n";
     }
     return Rem::Int::Ok;
 }
