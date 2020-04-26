@@ -10,53 +10,58 @@
 
 using namespace teacc::Util;
 
-namespace Diag
+namespace DTest
 {
 
-
-class DIAGNOSTIC_LIB Test
+struct DiagnosticData
 {
-    using Collection = std::map<std::string, Test*>;
-    String::Collection mArgs;
-    std::string mName;
-    friend class Diagnostic;
-public:
     
-    struct DiagnosticData
+    using Collection = std::map<std::string, DiagnosticData>;
+    using RunFN_t    = std::function<Expect<>(String::Collection)>;
+    std::string      mName;
+    std::string      mCmdLine;
+    String::Collection mArgs; //Broken mCmdLine into std::string whitespace-separated components.
+    String::Word::Collection mWords; // Broken mArgs into meaningful final Token components, excluding mArgs[0] which is the '--Test'$Name'.
+    
+    Expect<> mResult = Rem::Int::Unset;
+    
+    RunFN_t mRunFn = nullptr;
+    DiagnosticData() = default;
+    DiagnosticData(const DiagnosticData& D) = default;
+    DiagnosticData(DiagnosticData&& D) = default;
+    
+    DiagnosticData(std::string Name_, RunFN_t F)
     {
-        using Collection = std::vector<DiagnosticData>;
-        using Iterator   = Collection::iterator;
-        
-        std::string mName;
-        Expect<> mResult = Rem::Int::Unset;
-        
-        std::string operator()();
-    };
+        mName = std::move(Name_);
+        mRunFn = F;
+    }
     
-    Test() = default;
-    Test(std::string Name_);
-    Test(const Test&) = default;
-    Test(Test&&) = default;
-    ~Test() = default;
+    DiagnosticData& operator=(const DiagnosticData&) = default;
+    DiagnosticData& operator=(DiagnosticData&&) = default;
     
-    std::string Name() { return mName; }
-    virtual Expect<> Run() = 0;
+    DiagnosticData& operator << (std::string Arg_)
+    {
+        mArgs.push_back(std::move(Arg_));
+        return *this;
+    }
+    
+    Expect<> operator()(String::Collection Args_)
+    {
+        return (mRunFn ? mRunFn(std::move(Args_)) : Rem::Int::Unset);
+    }
 };
 
 
+
+struct TestData{
+    std::string Name;
+    DiagnosticData::RunFN_t Fn;
+};
+
 class DIAGNOSTIC_LIB Diagnostic
 {
-    Test::Collection mTests; ///< Reference Tests
-    std::stack<Test*> mToRun; ///< Stacked Tests
-    String::Collection mTestsNameToRun;
+    DiagnosticData::Collection mData; ///< Reference Tests
     std::string mName;
-    
-protected:
-    
-    using TestCreateFn = std::function<Test*(std::string)>;
-    
-    std::size_t Init(Diagnostic::TestCreateFn Fn = nullptr);
-    
 public:
     
     
@@ -72,7 +77,10 @@ public:
     ~Diagnostic();
     
     Expect <> Run(String::Collection Names_);
+    Diagnostic& operator << (TestData&& D);
     
+private:
+    String::CIterator Seek(const std::string& Name_, const String::Collection& Args_);
 };
 }
 

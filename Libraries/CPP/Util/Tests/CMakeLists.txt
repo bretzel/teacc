@@ -21,8 +21,8 @@ target_include_directories(${TargetName} PUBLIC
         "$<BUILD_INTERFACE:${TEACC_INCLUDE_PATHS}>"
         )
 
-target_link_libraries(${TargetName} ${CMAKE_DL_LIBS} Util)# sqlitedb logbook sqlite3 lexer interpreter)#journal grammar lexer utils sqlitedb)
-target_compile_features(${TargetName} PUBLIC cxx_std_17)
+target_link_libraries(${TargetName} ${CMAKE_DL_LIBS} Util Diagnostics)# sqlitedb logbook sqlite3 lexer interpreter)#journal grammar lexer utils sqlitedb)
+target_compile_features(${TargetName} PUBLIC cxx_std_20)
 
 IF (EXISTS "${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json")
     EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E copy_if_different
@@ -36,8 +36,15 @@ install(TARGETS ${TargetName}
         RUNTIME DESTINATION bin/${PROJECT_NAME}
         )
 
+
 add_custom_command(TARGET ${TargetName} POST_BUILD
-    COMMAND ${CMAKE_CURRENT_BIN_DIR}/${TargetName}
+    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${TargetName}
+
+        "--Test\\'Util::String::Words\\' /home/bretzel/.config"
+        "--Test\\'Util::AppBook\\' --File=/home/bretzel/Applications/bin/logs/AppBook-Test.log"
+
     WORKING_DIRECTORY ${CMAKE_CURRENT_BIN_DIR}
     COMMENT "Running ${TargetName}..."
 )
+
+

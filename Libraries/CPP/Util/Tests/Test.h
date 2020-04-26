@@ -4,22 +4,12 @@
 
 #pragma once
 
+#include <teacc/Util/Rem.h>
 #include <teacc/Diagnostics/Diagnostic.h>
 
-
-namespace teacc
+namespace teacc::Util
 {
 
-class String__TEST : public Diag::Test
-{
-    String::Word::Collection mWords;
-    
-public:
-    
-    Expect<> Run() override;
-    
-    
-};
 
 
 }

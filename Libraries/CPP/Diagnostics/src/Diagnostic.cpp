@@ -3,12 +3,9 @@
 //
 
 
-#include "../include/teacc/Diagnostics/Diagnostic.h"
-#include "../UtilTests.h"
+#include <teacc/Diagnostics/Diagnostic.h>
 
-
-
-namespace Diag
+namespace DTest
 {
 
 Diagnostic::Diagnostic(std::string Name_) : mName(std::move(Name_))
@@ -21,61 +18,38 @@ Diagnostic::~Diagnostic()
 
 Expect<> Diagnostic::Run(String::Collection Args_)
 {
-    mTestsNameToRun = std::move(Args_);
-    Init();
     Expect<> R;
-    while(!mToRun.empty())
+    int C = 1;
+    std::cout << "Mapping Args with DiagnosticData Objects by name:\n";
+    for(auto Ti : mData)
     {
-        ///@todo Open Output.
-        Test* Test_ = mToRun.top();
-        if((R = Test_->Run()))
-            Rem::Save() << Test_->Name() << ":-> " << Rem::ToStr(*R);
-        
-        ///@todo Close Output.
-        mToRun.pop();
+        if(auto CI = Seek(Ti.first, Args_); CI != Args_.cend())
+        {
+            Ti.second.mCmdLine = *CI;
+            std::cout << Ti.second.mName << "\n    => Associated ArgumentLine[\x1b[1;32m" << Ti.second.mCmdLine << "\x1b[0m]\n";
+        }
     }
     return Rem::Int::Ok;
 }
 
 
-/*!
- * @brief Create and Initialize the tests by the names given in the Args_ Collection.
- * @return
- */
-std::size_t Diagnostic::Init(Diagnostic::TestCreateFn Fn)
+Diagnostic &Diagnostic::operator<<(TestData&& D)
 {
-//    mTests = {
-//        {"Util", new UtilTests("Util")}
-//    };
-    
-    std::cout << "Stacking:\n";
-    if(!Fn)
+    mData[D.Name] = DiagnosticData(D.Name, D.Fn);
+    return *this;
+}
+String::CIterator Diagnostic::Seek(const std::string &Name_, const String::Collection &Args_)
+{
+    auto CI = Args_.cbegin();
+    while(CI != Args_.end())
     {
-        Rem::Save() << __PRETTY_FUNCTION__ << "\n" << Rem::Type::Fatal << ": No Test-Instanciate function was provided.\nDiagnostics Tests aborted.";
-        return 0;
+        if(std::size_t n = CI->find(Name_); n != std::string::npos) break;
+        ++CI;
     }
-    
-    int C = 0;
-    for(auto Name : mTestsNameToRun)
-    {
-        if(C++)
-        {
-            std::cout << "Test #" << C-1 << " :[" << Name << "]\n";
-            if(Fn)
-                mToRun.push(mTests[Name] = Fn(Name));
-            else
-                Rem::Save() << Rem::Type::Error <<
-                Rem::Int::Bad << " Name: Test identified by '" <<
-                Name << "' was rejected.";
-        }
-    }
-    
-    return mToRun.size();
+    return CI;
 }
 
 
-Test::Test(std::string Name_): mName(std::move(Name_)){}
-
-}//namespace Diag;
+}//namespace DTest;
 
 
