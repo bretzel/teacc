@@ -26,9 +26,9 @@ auto main(int argc, char** argv) -> int
     }
     
     DTest::Diagnostic D;
-    D <<
-    DTest::TestData{"Util::String::Words", Test_String_Words} <<
-    DTest::TestData{"Util::AppBook", Test_String_Words};
+    D
+    << DTest::TestData{"Util::String::Words", Test_String_Words}
+    << DTest::TestData{"Util::AppBook", Test_String_Words};
     
     
     D.Run(Args);

@@ -41,7 +41,7 @@ Diagnostic &Diagnostic::operator<<(TestData&& D)
 String::CIterator Diagnostic::Seek(const std::string &Name_, const String::Collection &Args_)
 {
     auto CI = Args_.cbegin();
-    while(CI != Args_.end())
+    while(CI != Args_.cend())
     {
         if(std::size_t n = CI->find(Name_); n != std::string::npos) break;
         ++CI;
