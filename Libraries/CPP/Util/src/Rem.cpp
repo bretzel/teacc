@@ -80,7 +80,8 @@ Rem &Rem::Null()
 std::size_t Rem::Clear(std::function<void(Rem &)> LambdaFN)
 {
     std::size_t Sz = Rem::_Stack.size();
-    
+    if(!Sz)
+        std::cout << " No Rem to clear.\n";
     while(!Rem::_Stack.empty())
     {
         if(LambdaFN)

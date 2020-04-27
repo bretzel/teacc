@@ -80,7 +80,8 @@ public:
     Diagnostic& operator << (TestData&& D);
     
 private:
-    String::CIterator Seek(const std::string& Name_, const String::Collection& Args_);
+    auto Seek(const std::string& CI);
+    
     std::size_t Map(String::Collection Args_);
 };
 }

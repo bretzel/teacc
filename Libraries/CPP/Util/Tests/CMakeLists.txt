@@ -36,12 +36,15 @@ install(TARGETS ${TargetName}
         RUNTIME DESTINATION bin/${PROJECT_NAME}
         )
 
+SET(EXPR "\\'A = sin pi/2\;\\'")
+
 
 add_custom_command(TARGET ${TargetName} POST_BUILD
     COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${TargetName}
 
-        "--Test\\'Util::String::Words\\' *"
-        "--Test\\'Util::AppBook\\' --File=/home/bretzel/Applications/bin/logs/AppBook-Test.log"
+        "--Test=\\'Util::String::Words\\' ${CMAKE_INSTALL_PREFIX}"
+        "--Test=\\'Util::AppBook\\' --File=/home/bretzel/Applications/bin/logs/AppBook-Test.log"
+        "--Test=\\'Lexer::TokenScan\\' ${EXPR}"
 
     WORKING_DIRECTORY ${CMAKE_CURRENT_BIN_DIR}
     COMMENT "Running ${TargetName}..."

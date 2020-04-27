@@ -19,7 +19,7 @@ auto main(int argc, char** argv) -> int
 {
     String::Collection Args = String::ArgsArray(argc, argv);
     int C=0;
-    for(auto S : Args)
+    for(auto const& S : Args)
     {
         if(C++)
             std::cout << "\x1b[32mTest \x1b[1;35mCmdLineArg#\x1b[1;34m" << C-1 << "\x1b[1;37m: " << S << "\x1b[0m\n";
