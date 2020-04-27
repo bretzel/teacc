@@ -24,6 +24,19 @@ Expect<> Diagnostic::Run(String::Collection Args_)
     auto count = Map(std::move(Args_));
     
     std::cout << count << '\n';
+    
+    for(auto Ti:mData)
+    {
+        if( !Ti.second.mCmdLine.empty() )
+        {
+            (Ti.second)();
+        }
+        else
+        {
+            Rem::Save() << Rem::Type::Warning << ": " << " Test [" << Ti.first << "] ignored";
+        }
+    }
+    
     Rem::Clear( [](Rem& R) {std::cout << R() << '\n';} );
     return Rem::Int::Ok;
 }
@@ -80,6 +93,21 @@ std::size_t Diagnostic::Map(String::Collection Args_)
     }
     std::cout << "--------------------------------------------------------------------------\n";
     return mData.size();
+}
+
+Expect<> DiagnosticData::operator()()
+{
+    String Str = mCmdLine;
+    std::size_t sz = Str.Words(mWords, String::DefaultSeparators(), true);
+    if(sz)
+    {
+        for(auto  W:mWords)
+        {
+            std::cout << "[" << W() << "] ";
+        }
+        std::cout << "\n";
+    }
+    return (mRunFn ? mRunFn(mArgs) : Rem::Int::Unset);
 }
 
 }//namespace DTest;

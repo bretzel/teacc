@@ -45,10 +45,7 @@ struct DiagnosticData
         return *this;
     }
     
-    Expect<> operator()(String::Collection Args_)
-    {
-        return (mRunFn ? mRunFn(std::move(Args_)) : Rem::Int::Unset);
-    }
+    Expect<> operator()();
 };
 
 
