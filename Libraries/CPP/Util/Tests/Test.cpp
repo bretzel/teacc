@@ -11,6 +11,7 @@ using teacc::Util::Expect;
 
 Expect<> Test_String_Words(String::Collection Args)
 {
+    std::cout << __PRETTY_FUNCTION__ << " \\O/!\n";
     return Rem::Int::Implement;
 }
 
@@ -27,11 +28,15 @@ auto main(int argc, char** argv) -> int
     
     DTest::Diagnostic D;
     D
-    << DTest::TestData{"Util::String::Words", Test_String_Words}
+    << DTest::TestData{"Util::String::Words", &UtilStringWords::Run}
     << DTest::TestData{"Util::AppBook", Test_String_Words};
     
     
     D.Run(Args);
     Args.clear();
     return 0;
+}
+Expect<> UtilStringWords::Run(String::Collection Args_)
+{
+    return Expect<>();
 }

@@ -10,7 +10,12 @@
 namespace teacc::Util
 {
 
-
+class UtilStringWords
+{
+public:
+    static Expect<> Run(String::Collection Args_);
+    
+};
 
 }
 

@@ -109,6 +109,11 @@ Expect<> DiagnosticData::operator()()
     }
     return (mRunFn ? mRunFn(mArgs) : Rem::Int::Unset);
 }
+std::size_t DiagnosticData::ProcessCmdLine()
+{
+    
+    return 0;
+}
 
 }//namespace DTest;
 

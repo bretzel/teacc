@@ -46,6 +46,10 @@ struct DiagnosticData
     }
     
     Expect<> operator()();
+    
+private:
+    std::size_t ProcessCmdLine();
+    
 };
 
 
