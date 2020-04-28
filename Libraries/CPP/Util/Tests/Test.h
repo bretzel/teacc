@@ -10,11 +10,18 @@
 namespace teacc::Util
 {
 
-class UtilStringWords
+struct UtilStringWords
 {
 public:
     static Expect<> Run(String::Collection Args_);
     
+};
+
+
+struct UtilAppBook
+{
+public:
+    static Expect<> Run(String::Collection Args_);
 };
 
 }

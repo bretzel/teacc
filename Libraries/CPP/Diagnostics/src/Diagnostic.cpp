@@ -36,8 +36,9 @@ Expect<> Diagnostic::Run(String::Collection Args_)
             Rem::Save() << Rem::Type::Warning << ": " << " Test [" << Ti.first << "] ignored";
         }
     }
-    
     Rem::Clear( [](Rem& R) {std::cout << R() << '\n';} );
+    std::cout << "\n-------------------------- END DIAGNOSTICS TESTS --------------------------------------\n\n\n\n";
+    
     return Rem::Int::Ok;
 }
 

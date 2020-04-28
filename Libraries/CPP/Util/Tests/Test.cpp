@@ -29,7 +29,7 @@ auto main(int argc, char** argv) -> int
     DTest::Diagnostic D;
     D
     << DTest::TestData{"Util::String::Words", &UtilStringWords::Run}
-    << DTest::TestData{"Util::AppBook", Test_String_Words};
+    << DTest::TestData{"Util::AppBook", UtilAppBook::Run};
     
     
     D.Run(Args);
@@ -38,5 +38,11 @@ auto main(int argc, char** argv) -> int
 }
 Expect<> UtilStringWords::Run(String::Collection Args_)
 {
+    std::cout << __PRETTY_FUNCTION__ << " \\O/!\n";
+    return Expect<>();
+}
+Expect<> UtilAppBook::Run(String::Collection Args_)
+{
+    std::cout << __PRETTY_FUNCTION__ << " \\O/!\n";
     return Expect<>();
 }
