@@ -530,7 +530,6 @@ std::size_t String::Words(String::Word::Collection &wcollection, const std::stri
         wcollection.push_back({w.B, _Cursor.C - 1, _Cursor.E, w.L, w.C, w.Pos});
     
     return wcollection.size();
-    
 }
 
 

@@ -36,7 +36,7 @@
 
 namespace teacc
 {
-// No namespace here. AppBook to be used so fuKJK* too often.
+// No namespace here. AppBook to be used so fuc'* too often.
 
 enum class Color : uint16_t
 {
