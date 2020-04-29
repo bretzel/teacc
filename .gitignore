@@ -295,5 +295,6 @@ gnu_build/
 cmake-*
 .clangd/
 googletest/
+compile_commands.json
 
 

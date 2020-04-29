@@ -70,18 +70,18 @@ struct LEXER_LIB TokenData
     static Type::T     Int(const std::string&);
     
     
-    bool IsBinary()        {return S & Type::binary;}
-    bool isUnary()         {return S & Type::unary;}
-    bool isIdentifier()    {return S & Type::id;}
-    bool isLeaf()          {return S & Type::leaf;}
-    bool isOperator()      {return S & Type::oper;}
-    bool isClosing_pair()  {return S & Type::closepar;}
-    bool isPunctuation()   {return S & Type::punctuation;}
-    bool isNumber()        {return S & Type::number;}
-    bool isHexadecimal()   {return S & Type::hex;}
-    bool isPrefix()        {return S & Type::prefix;}
-    bool isPostfix()       {return S & Type::postfix;}
-    bool isInstruction()   {return !(S & (Type::oper | Type::leaf));}
+    [[nodiscard]] bool IsBinary()        const{return S & Type::binary;}
+    [[nodiscard]] bool isUnary()         const{return S & Type::unary;}
+    [[nodiscard]] bool isIdentifier()    const{return S & Type::id;}
+    [[nodiscard]] bool isLeaf()          const{return S & Type::leaf;}
+    [[nodiscard]] bool isOperator()      const{return S & Type::oper;}
+    [[nodiscard]] bool isClosing_pair()  const{return S & Type::closepar;}
+    [[nodiscard]] bool isPunctuation()   const{return S & Type::punctuation;}
+    [[nodiscard]] bool isNumber()        const{return S & Type::number;}
+    [[nodiscard]] bool isHexadecimal()   const{return S & Type::hex;}
+    [[nodiscard]] bool isPrefix()        const{return S & Type::prefix;}
+    [[nodiscard]] bool isPostfix()       const{return S & Type::postfix;}
+    [[nodiscard]] bool isInstruction()   const{return !(S & (Type::oper | Type::leaf));}
     
     
     
