@@ -58,6 +58,7 @@ install(TARGETS ${PROJECT_NAME} EXPORT ${PROJECT_NAME}Targets
         INCLUDES DESTINATION include
 )
 
+add_subdirectory(Tests)
 
 string(REPLACE "++" "" NS PROJECTNAME)
 

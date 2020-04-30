@@ -3,22 +3,22 @@
 #FILE(GLOB HDRS ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
 FILE(GLOB SRCS *.cpp)
 SET(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
+SET(TargetName LexerTests.App)
 #target_compile_definitions(${PROJECT_NAME} PUBLIC "${PROJECT_NAME}_DEBUG=$<CONFIG:Debug>")
 #target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 
 #include(GenerateExportHeader)
 #add_dependencies(tdd journal grammar Lexer Lexers)
 
-add_executable(LexerTests.app ${SRCS})
-add_dependencies(LexerTests.app Lexer ) #sqlitedb logbook Lexer)
+add_executable(${TargetName} ${SRCS})
+add_dependencies(${TargetName} Lexer ) #sqlitedb logbook Lexer)
 
 list(APPEND TEACC_INCLUDE_PATHS "${CMAKE_CURRENT_SOURCE_DIR}/include" "${TEACC_ROOT}/Lexer/include")# "${TEACC_ROOT}/xdb/sqlite3/include" "${XIO_ROOT}/Lexer/include" "${XIO_ROOT}/interpreter/include")
-target_include_directories(LexerTests.app PUBLIC
+target_include_directories(${TargetName} PUBLIC
         "$<BUILD_INTERFACE:${TEACC_INCLUDE_PATHS}>"
         )
 
-target_link_libraries(LexerTests.app ${CMAKE_DL_LIBS} Util)# sqlitedb logbook sqlite3 Lexer interpreter)#journal grammar Lexer Lexers sqlitedb)
+target_link_libraries(${TargetName} ${CMAKE_DL_LIBS} Util Diagnostics Lexer)# sqlitedb logbook sqlite3 Lexer interpreter)#journal grammar Lexer Lexers sqlitedb)
 target_compile_features("${PROJECT_NAME}" PUBLIC cxx_std_17)
 
 IF (EXISTS "${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json")
@@ -29,9 +29,25 @@ IF (EXISTS "${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json")
 ENDIF ()
 
 
-install(TARGETS LexerTests.app
+install(TARGETS ${TargetName}
         RUNTIME DESTINATION bin
         )
+
+
+
+SET(EXPR "\\'A = sin pi/2\;\\'")
+
+
+add_custom_command(TARGET ${TargetName} POST_BUILD
+    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${TargetName}
+
+        "--Test=\\'Lexer::TokenData::Scan\\' \\'\\>\\<\\'"
+        "--Test=\\'Util::AppBook\\' --File=/home/bretzel/Applications/bin/logs/AppBook-Test.log"
+        "--Test=\\'Lexer::TokenScan\\' ${EXPR}"
+
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BIN_DIR}
+    COMMENT "Running ${TargetName}..."
+)
 
 
 #install(DIRECTORY
