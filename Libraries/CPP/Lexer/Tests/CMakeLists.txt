@@ -4,22 +4,37 @@
 FILE(GLOB SRCS *.cpp)
 SET(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 SET(TargetName LexerTests.App)
+SET(ExecName   Lexer.App)
+
 #target_compile_definitions(${PROJECT_NAME} PUBLIC "${PROJECT_NAME}_DEBUG=$<CONFIG:Debug>")
 #target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 
 #include(GenerateExportHeader)
 #add_dependencies(tdd journal grammar Lexer Lexers)
 
+
 add_executable(${TargetName} ${SRCS})
-add_dependencies(${TargetName} Lexer ) #sqlitedb logbook Lexer)
+#add_executable(${ExecName} ${SRCS} )
+
+add_dependencies(${TargetName} Util Diagnostics Lexer ) #sqlitedb logbook Lexer)
+#add_dependencies(${ExecName} Util Diagnostics Lexer ) #sqlitedb logbook Lexer)
 
 list(APPEND TEACC_INCLUDE_PATHS "${CMAKE_CURRENT_SOURCE_DIR}/include" "${TEACC_ROOT}/Lexer/include")# "${TEACC_ROOT}/xdb/sqlite3/include" "${XIO_ROOT}/Lexer/include" "${XIO_ROOT}/interpreter/include")
-target_include_directories(${TargetName} PUBLIC
-        "$<BUILD_INTERFACE:${TEACC_INCLUDE_PATHS}>"
+
+target_link_libraries(${TargetName}  Util Diagnostics Lexer)# sqlitedb logbook sqlite3 Lexer interpreter)#journal grammar Lexer Lexers sqlitedb)
+#target_link_libraries(${ExectName}  Util Diagnostics Lexer)# sqlitedb logbook sqlite3 Lexer interpreter)#journal grammar Lexer Lexers sqlitedb)
+
+target_compile_features(${TargetName}
+        PUBLIC cxx_std_17
         )
 
-target_link_libraries(${TargetName} ${CMAKE_DL_LIBS} Util Diagnostics Lexer)# sqlitedb logbook sqlite3 Lexer interpreter)#journal grammar Lexer Lexers sqlitedb)
-target_compile_features("${PROJECT_NAME}" PUBLIC cxx_std_17)
+#target_compile_features(${ExecName} PUBLIC cxx_std_17)
+
+#target_include_directories(${ExecName} PUBLIC  "$<BUILD_INTERFACE:${TEACC_INCLUDE_PATHS}>" )
+target_include_directories(${TargetName} PUBLIC "$<BUILD_INTERFACE:${TEACC_INCLUDE_PATHS}>" )
+
+
+
 
 IF (EXISTS "${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json")
     EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E copy_if_different

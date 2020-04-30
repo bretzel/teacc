@@ -7,7 +7,7 @@
 Expect<> LexerTests::Run(String::Collection Args_)
 {
     teacc::TokenData Token;
-    const char* TestStr = " >< ";
+    const char* TestStr = "><=2;";
     Token = teacc::TokenData::Scan(TestStr);
     if(Token)
     {
