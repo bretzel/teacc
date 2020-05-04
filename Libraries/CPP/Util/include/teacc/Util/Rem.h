@@ -43,7 +43,8 @@ public:
         UnInit,
         Implement,
         Accepted,
-        Rejected
+        Rejected,
+        Unterminated
     };
     
     enum class Type : uint8_t

@@ -98,24 +98,26 @@ std::size_t Diagnostic::Map(String::Collection Args_)
 
 Expect<> DiagnosticData::operator()()
 {
-    String Str = mCmdLine;
+    
     ProcessCmdLine();
-    std::size_t sz = Str.Words(mWords, String::DefaultSeparators(), true);
-    if(sz)
-    {
-        for(auto  W:mWords)
-        {
-            std::cout << "[" << W() << "] ";
-        }
-        std::cout << "\n";
-    }
+    
     return (mRunFn ? mRunFn(mArgs) : Rem::Int::Unset);
 }
 
 
 std::size_t DiagnosticData::ProcessCmdLine()
 {
+    String Str = mCmdLine;
     std::cout << __PRETTY_FUNCTION__ << ": '" << mCmdLine << "' \\O/\n";
+    std::size_t sz = Str.Words(mWords, String::DefaultSeparators(), true);
+    if(sz)
+    {
+        for(auto W:mWords)
+        {
+            std::cout << "[" << W() << "] ";
+        }
+        std::cout << "\n";
+    }
     return 0;
 }
 

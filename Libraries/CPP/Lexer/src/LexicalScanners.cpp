@@ -317,6 +317,8 @@ teacc::Util::Expect<std::size_t> LexicalScanners::Scan()
     return static_cast<std::size_t>(Rem::Int::Rejected);
 }
 
+
+
 LexicalScanners::Return LexicalScanners::Number(TokenData &Token_)
 {
     NumScanner Num_ = {mCursor.C, mCursor.E};
@@ -330,14 +332,167 @@ LexicalScanners::Return LexicalScanners::Number(TokenData &Token_)
     mCursor.Sync();
     Type::T S = Num_();
     Token_ = {Lexem::Mnemonic::noop, S, Type::number | S, Delta::identifier, {Num_.B, Num_.E, mCursor.L, mCursor.Col, mCursor.Index()}, {1, 0, 0}, nullptr};
+    
+    if( !(Token_.S & Type::real))
+    {
+        String str;
+        str << Token_.Attr();
+        uint64_t D=0;
+        std::istringstream i(str.c_str());
+        switch(Num_.n)
+        {
+            case NumScanner::Bin:
+                //????????? ah!
+                break;
+            case NumScanner::Oct:
+                i >> std::oct >> D;
+                break;
+            case NumScanner::Dec:
+                i >> D;
+                break;
+            case NumScanner::Hex:
+                i >> std::hex >> D;
+                break;
+            default:
+                str >> D;
+                break;
+        }
+        
+        //std::cout << __PRETTY_FUNCTION__ << " Parsed number:" << D << '\n';
+        uint64_t n = 0;
+        std::array<uint64_t,3> R = {0x100,0x10000,0x100000000};
+        while(D >= R[n])
+            ++n;
+        
+        switch(n)
+        {
+            case 0:Token_.S = (Token_.S & ~Type::u64) | Type::u8;
+                break;
+            case 1:Token_.S = (Token_.S & ~Type::u64) | Type::u16;
+                break;
+            case 2:Token_.S = (Token_.S & ~Type::u64) | Type::u32;
+                break;
+            default:Token_.S= (Token_.S & ~Type::u64) | Type::u64;
+                break;
+        }
+    }
     // ...
     Append(Token_);
     return Rem::Int::Accepted;
 }
 
-LexicalScanners::Return LexicalScanners::Identifier(TokenData &)
+
+LexicalScanners::Return LexicalScanners::Identifier(TokenData &Token_)
 {
-    return Util::Expect<>();
+    const char* C = mCursor.C;
+    if( !(std::isalpha(*C)) && (*C != '_') )
+        return Rem::Int::Rejected;
+    
+    ++C;
+    while (std::isalnum(*C) || (*C=='_')) ++C;
+    
+    if (C <= mCursor.C)
+        return Rem::Int::Rejected;
+    
+    --C;
+    Token_.mLoc.Begin = mCursor.C;
+    Token_.mLoc.End = C;
+    Token_.mLoc.C = mCursor.Col;
+    Token_.mLoc.L = mCursor.L;
+    Token_.mLoc.I = mCursor.Index(); ///@todo Reduce overhead.
+    Token_.C = Lexem::Mnemonic::noop;
+    Token_.T = Type::id;
+    Token_.mFlags = { 1,0,0 };
+    Token_.S = Type::leaf | Type::id;
+    Token_.D = Delta::identifier;
+    //LogDebugFn << " Attribute: [" << Token_.attribute() << ']' << Ends;
+    return Rem::Int::Accepted;
+}
+
+
+
+LexicalScanners::Return LexicalScanners::Literal(TokenData &Token_)
+{
+    
+    const char* i = mCursor.C; // i on the quote lexem
+    const char q = *i;
+    const char* c;
+    std::string litteral;
+    //LogDebugFn << " Cursor on " << i << Ends;
+    ///*if (i == nullptr)
+    //    return {};*/
+    //if (result r; !(r = scan_unexpected(Token_))) return r; // Sous reserve
+    ++i; c = i;
+    Token_.mLoc.Begin = mCursor.C;
+    while (!mCursor.Eof(i) && (*i && (*i != q))) {
+        std::cerr << "i on '" << *i << "'\n";
+        // Note '\n' est UN BYTE. == (int)10.
+        if (*i == '\\') { // Sauf si on a explicitement '\\' dans la string.
+            ++i;
+            if (mCursor.Eof(i)) {
+                std::cout << " eof in \"" << litteral << "\"....\n";
+                return {};
+            }
+            switch (*i) { // On garde le switch-case. Faire une (std::)map serait, je crois, plus coûteux en resources ici.
+                case 'n':
+                    litteral += (char)10; ++i; // Codé à la dur mais c<est pourtant universellement le code ascii assigné
+                    break;
+                case 'r':
+                    litteral += (char)13; ++i;
+                    break;
+                case 't':
+                    litteral += (char)8; ++i;
+                    break;
+                case 'a': // on le garde. Oops. je m'en souviens plus, du code ASCII.... :)
+                    ++i;
+                    break;
+                case 'c':
+                    litteral += (char)3; ++i;
+                    break;
+                case '0': // Okay oui. ( code ASCII de EOF )
+                    litteral += (char)0; ++i;
+                    break;
+                case 'e':
+                    litteral += (char)27; ++i;
+                    break;
+                    ///@Todo  Continuer d'analyser les characteres de contr&ocirc;le.
+                default:
+                    litteral += *i++;
+                    break;
+            }// end switch
+            continue;
+        } // end if '\\';
+        litteral += *i++;
+    }
+    if (mCursor.Eof(i)) {
+        std::cout << " eof ->  scanned: \"" << litteral << "\"....\n";
+        goto UnterminatedError;
+    }
+    //--i;
+    std::cerr << "end : i on '" << *i << "'\n";
+    //if (/* *i && (*/*i == q/*)*/) {
+    mCursor.Sync();
+    Token_.mLoc.Begin = mCursor.C; // +1;
+    Token_.mLoc.End = i;
+    Token_.mLoc.L = mCursor.L;
+    Token_.mLoc.C = mCursor.Col;
+    
+    Token_.C = Lexem::Mnemonic::noop;
+    Token_.T = Type::text;
+    Token_.S = Type::text | Type::leaf;
+    std::cerr << "Litteral accepted:token_t[" << Token_.Attr() << "]\n";
+    return { Rem::Int::Accepted };
+    //}
+    UnterminatedError:
+    Token_.mLoc.Begin = mCursor.C;
+    Token_.mLoc.End = mCursor.C; ///@todo  D&eacute;terminer la s&eacute;quence &agrave; fournir.
+    Token_.mLoc.I = mCursor.C - mCursor.B;
+    Token_.mLoc.L = mCursor.L;
+    Token_.mLoc.C = mCursor.Col;
+    
+    return (
+        Rem::Save() << Rem::Type::Error << ": " <<  Rem::Int::Unterminated << '\n' << Token_.Mark()
+    );
 }
 
 #pragma endregion Scanners

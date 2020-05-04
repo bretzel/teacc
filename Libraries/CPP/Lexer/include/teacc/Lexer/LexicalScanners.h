@@ -100,8 +100,9 @@ private:
     
     #pragma region Scanners
     
-    LexicalScanners::Return  Number(TokenData&);
+    LexicalScanners::Return Number(TokenData&);
     LexicalScanners::Return Identifier(TokenData&);
+    LexicalScanners::Return Literal(TokenData&);
     
     #pragma endregion Scanners
     

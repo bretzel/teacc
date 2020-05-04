@@ -134,6 +134,7 @@ std::string Rem::ToStr(Rem::Int C)
         {Rem::Int::Implement,   "Not Implemented"},
         {Rem::Int::Accepted,    "Accepted"},
         {Rem::Int::Rejected,    "Rejected"},
+        {Rem::Int::Unterminated,    "Unterminated"},
     };
     
     return _[C];
