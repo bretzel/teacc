@@ -111,6 +111,8 @@ Expect<> DiagnosticData::operator()()
     }
     return (mRunFn ? mRunFn(mArgs) : Rem::Int::Unset);
 }
+
+
 std::size_t DiagnosticData::ProcessCmdLine()
 {
     std::cout << __PRETTY_FUNCTION__ << ": '" << mCmdLine << "' \\O/\n";
