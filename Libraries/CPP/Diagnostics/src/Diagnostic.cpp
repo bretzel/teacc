@@ -75,12 +75,13 @@ auto Diagnostic::Seek(const std::string& CI)
 std::size_t Diagnostic::Map(String::Collection Args_)
 {
     // Main Loop
-    std::cout << "Mapping Args with DiagnosticData Objects by name:\n";
+    std::cout << "Mapping Commandline Line with DiagnosticData Objects by name:\n";
     if(mData.empty())
     {
         Rem::Save() << Rem::Type::Error << " Diagnostic::Map : No Diagnostics/Tests data set.\n -- Aborting Diagnostics.";
         return 0;
     }
+    
     int C=0;
     for(auto const& CI : Args_)
     {
@@ -98,6 +99,7 @@ std::size_t Diagnostic::Map(String::Collection Args_)
 Expect<> DiagnosticData::operator()()
 {
     String Str = mCmdLine;
+    ProcessCmdLine();
     std::size_t sz = Str.Words(mWords, String::DefaultSeparators(), true);
     if(sz)
     {
@@ -111,7 +113,7 @@ Expect<> DiagnosticData::operator()()
 }
 std::size_t DiagnosticData::ProcessCmdLine()
 {
-    
+    std::cout << __PRETTY_FUNCTION__ << ": '" << mCmdLine << "' \\O/\n";
     return 0;
 }
 
