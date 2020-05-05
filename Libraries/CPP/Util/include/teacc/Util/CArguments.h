@@ -38,7 +38,10 @@ template <typename T> struct Option
     
     OptFnPtr    mFnPtr  = nullptr;
     // ----------------
+    
     std::string Name;
+    std::string Description;
+    
     char        C=0;
     //-----------------
     
@@ -56,6 +59,12 @@ template <typename T> struct Option
         nArgs = Count_;
         mIsNVariable = IsVar_;
     }
+    
+    ~Option()
+    {
+        mData.clear();
+    }
+    
     
     
 };
