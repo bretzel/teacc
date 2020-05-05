@@ -378,7 +378,7 @@ public:
         
         template<typename T> Log& operator << (const T& V)
         {
-            mText << V; // Uses default Util::String input operator.
+            mText << V; // Uses default Util::String Input operator.
             return *this;
         }
         

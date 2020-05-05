@@ -36,7 +36,7 @@ struct LEXER_LIB TokenData
     } mLoc;
     
     struct LEXER_LIB Flag {
-        int8_t V : 1; ///< Pre-parsed as a value TokenData;
+        int8_t V : 1; ///< Pre-parsed as a value ArgToken;
         int8_t S : 1; ///< Post parsed as assignable
         int8_t M : 1; ///< Virtual multiplication operator. (...4ac...)
     } mFlags = {0,0,0};
@@ -54,7 +54,7 @@ struct LEXER_LIB TokenData
     TokenData& operator=(TokenData&& Token_)noexcept;
     TokenData& operator=(const TokenData& Token_);
     TokenData  operator[](Lexem::Mnemonic CC);
-    //TokenData* ptr() { return this; }
+    //ArgToken* ptr() { return this; }
     std::string Mark();
     
     
@@ -89,9 +89,9 @@ struct LEXER_LIB TokenData
     /*
         // Still to do:
 
-    static TokenData query(Type::t ty);
-    static TokenData query(Lexem::t lx);
-    static TokenData query(Mnemonic a_code);
+    static ArgToken query(Type::t ty);
+    static ArgToken query(Lexem::t lx);
+    static ArgToken query(Mnemonic a_code);
     static Mnemonic strtoMnemonic(const std::string &k);
 
     */

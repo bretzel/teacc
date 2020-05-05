@@ -1,58 +1,64 @@
-//
-// Created by bretzel on 20-04-18.
-//
+/*
+    <one line to give the program's name and a brief idea of what it does.>
+    Copyright (C) 2013  Serge Lussier <email>
 
-//#ifndef UTIL_CARGUMENTS_H
-//#define UTIL_CARGUMENTS_H
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #pragma once
 
+
 #include <teacc/Util/Rem.h>
+
 
 namespace teacc::Util
 {
 
 
-class UTIL_LIB CArg
+
+
+template <typename T> struct Option
 {
-    String::Collection mArgValues;
-    String::CIterator mCursor;
+    T*    mInstance     = nullptr;
+    using OptFnPtr      = Expect<>(T::*)(const std::string&);
     
-public:
+    using Collection    = std::vector<Option<T>>;
+    using Iterator      = typename Collection::iterator;
     
-    using Collection = std::vector<CArg>;
-    using Iterator   = Collection::iterator;
+    OptFnPtr    mFnPtr  = nullptr;
+    // ----------------
+    std::string Name;
+    char        C=0;
+    //-----------------
     
-    struct Params{
-        bool Opt    = true; // = optional.
-        int  nArgs  = -1;   // -1 = not specified; (0 or unlimited, such as '*' glob from the shell)
-        std::string mLSwitch;
-        std::string mShort;
-        //... To be continued
-    };
-    
-    CArg() = default;
-    ~CArg() = default;
- 
-    CArg(const CArg& A);
-    CArg(CArg &&A) noexcept;
-    
-    CArg& operator = (const CArg& A) ;
-    CArg& operator = (CArg && A) noexcept;
-    
-    CArg& operator << (const std::string& A);
+    int  nArgs = 0; ///< -1 = unspecified. 0 = none; 1...+ = 1 .. n args;
+    bool mIsNVariable = false;
+    std::vector<std::string> mData;
     
     
-    [[nodiscard]] std::size_t NumArgs() const { return mArgValues.size(); }
+    Option(T& Instance_, Option::OptFnPtr OptFn_, std::string Name_, char C_, int Count_ = -1, bool IsVar_=false)
+    {
+        mInstance = &Instance_;
+        mFnPtr = OptFn_;
+        Name = std::move(Name_);
+        C = C_;
+        nArgs = Count_;
+        mIsNVariable = IsVar_;
+    }
     
     
 };
 
-class UTIL_LIB CArguments
-{
-
-};
 
 }
-
-//#endif //UTIL_CARGUMENTS_H

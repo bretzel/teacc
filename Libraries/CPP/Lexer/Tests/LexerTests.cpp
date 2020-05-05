@@ -15,7 +15,7 @@ Expect<> LexerTests::Run(String::Collection Args_)
     }
     else
     {
-        return (Rem::Save() << Rem::Type::Error << ": TokenData::Scan failed on '" << TestStr << "'");
+        return (Rem::Save() << Rem::Type::Error << ": ArgToken::Scan failed on '" << TestStr << "'");
     }
     
     std::cout << __PRETTY_FUNCTION__ << ":-> \\O/!\n";
@@ -38,7 +38,7 @@ auto main(int argc, char** argv) -> int
     
     DTest::Diagnostic D;
     D
-    << DTest::TestData{"Lexer::TokenData::Scan", &LexerTests::Run};
+    << DTest::TestData{"Lexer::ArgToken::Scan", &LexerTests::Run};
     //<< DTest::TestData{"Util::AppBook", UtilAppBook::Run};
     
    
