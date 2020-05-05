@@ -11,7 +11,7 @@ Expect<> LexerTests::Run(String::Collection Args_)
     Token = teacc::TokenData::Scan(TestStr);
     if(Token)
     {
-        std::cout << "Token::Info [" << Token.Attr() << ":{" << Token.SemanticTypes() << "}]\n";
+        std::cout << "Token:[" << Token.Details() << "]\n";
     }
     else
     {

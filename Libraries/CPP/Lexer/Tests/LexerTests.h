@@ -7,7 +7,7 @@
 
 #pragma once
 #include <teacc/Diagnostics/Diagnostic.h>
-#include <teacc/Lexer/LexicalScanners.h>
+#include <teacc/Lexer/Lexer.h>
 
 
 using namespace teacc::Lexer;

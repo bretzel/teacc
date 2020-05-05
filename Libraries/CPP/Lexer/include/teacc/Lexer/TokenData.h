@@ -62,8 +62,9 @@ struct LEXER_LIB TokenData
     bool operator || (Type::T Sem_) const  { return S || Sem_; }
     
     [[nodiscard]] std::string Attr()  { return mLoc(); }
-    std::string SemanticTypes();
-    std::string TypeName();
+    [[nodiscard]] std::string SemanticTypes();
+    [[nodiscard]] std::string TypeName();
+    [[nodiscard]] std::string Details();
     
     static TokenData Scan(const char* C_);
     static std::string Str(Type::T Type_);

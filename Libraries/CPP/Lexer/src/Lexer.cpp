@@ -2,7 +2,7 @@
 // Created by bretzel on 20-04-22.
 //
 
-#include <teacc/Lexer/LexicalScanners.h>
+#include <teacc/Lexer/Lexer.h>
 #include <cstring>
 
 
@@ -22,7 +22,7 @@ namespace Lexer
  * Prefix increment operator
  * @return true if C is not on EOF, false otherwise.
  */
-bool LexicalScanners::InternalCursor::operator++()
+bool Scanners::InternalCursor::operator++()
 {
     if(C >= E)
         return false;
@@ -38,7 +38,7 @@ bool LexicalScanners::InternalCursor::operator++()
  * Postfix increment operator, just calls the prefix increment operator.
  * @return true if C is not on EOF, false otherwise.
  */
-bool LexicalScanners::InternalCursor::operator++(int)
+bool Scanners::InternalCursor::operator++(int)
 {
     return ++(*this);
 }
@@ -49,7 +49,7 @@ bool LexicalScanners::InternalCursor::operator++(int)
  * Named method, just calls the prefix increment operator.
  * @return true if C is not on EOF, false otherwise.
  */
-bool LexicalScanners::InternalCursor::SkipWS()
+bool Scanners::InternalCursor::SkipWS()
 {
     return ++(*this);
 }
@@ -59,7 +59,7 @@ bool LexicalScanners::InternalCursor::SkipWS()
  * @param P
  * @return true if P is EOF, false otherwise.
  */
-bool LexicalScanners::InternalCursor::Eof(const char *P)
+bool Scanners::InternalCursor::Eof(const char *P)
 {
     if(P)
         return P > E;
@@ -71,7 +71,7 @@ bool LexicalScanners::InternalCursor::Eof(const char *P)
  *
  * @return none.
  */
-void LexicalScanners::InternalCursor::Sync()
+void Scanners::InternalCursor::Sync()
 {
     L = 1;
     const char *Pos_ = C;
@@ -95,7 +95,7 @@ void LexicalScanners::InternalCursor::Sync()
  * @brief Get the ptrdiff between the C pointer and the beginning of the source text (B pointer).
  * @return int.
  */
-int LexicalScanners::InternalCursor::Index()
+int Scanners::InternalCursor::Index()
 {
     return C - B;
 }
@@ -104,7 +104,7 @@ int LexicalScanners::InternalCursor::Index()
  * @brief Advances/Consume the C pointer till the next NewLine{'\r'; '\n'}  code in the source text
  * @return distinct std::string of the sequence.
  */
-std::string LexicalScanners::InternalCursor::ScanToEol()
+std::string Scanners::InternalCursor::ScanToEol()
 {
     std::string Str;
     while((C <= E) && (*C != '\n') && (*C != '\r'))
@@ -116,7 +116,7 @@ std::string LexicalScanners::InternalCursor::ScanToEol()
  * @brief Get a std::string copy of the current line from the C pointer
  * @return string.
  */
-std::string LexicalScanners::InternalCursor::Line()
+std::string Scanners::InternalCursor::Line()
 {
     std::string Str;
     
@@ -142,7 +142,7 @@ std::string LexicalScanners::InternalCursor::Line()
   * @note : Must be Sync()'ed before calling Mark();
  
  */
-std::string LexicalScanners::InternalCursor::Mark()
+std::string Scanners::InternalCursor::Mark()
 {
     Util::String Str = Line();
     Str << '\n';
@@ -156,14 +156,14 @@ std::string LexicalScanners::InternalCursor::Mark()
  * @brief Get the string representation of the [internal]cursor location in the source text.
  * @return std::string
  */
-std::string LexicalScanners::InternalCursor::Location()
+std::string Scanners::InternalCursor::Location()
 {
     Util::String Str = "%d,%d";
     Str << L << Col;
     return Str();
 }
 
-void LexicalScanners::Append(TokenData &Token_)
+void Scanners::Append(TokenData &Token_)
 {
     // Consume the Cursor the length of the Token [text] Attribute.
     //...
@@ -175,13 +175,13 @@ void LexicalScanners::Append(TokenData &Token_)
  * @param SubStr_
  * @return Expect code.
  */
-Rem::Int LexicalScanners::InternalCursor::ScanTo(const char *SubStr_)
+Rem::Int Scanners::InternalCursor::ScanTo(const char *SubStr_)
 {
     
     return Util::Rem::Int::Ok;
 }
 
-teacc::Util::Expect<std::string> LexicalScanners::InternalCursor::ScanString()
+teacc::Util::Expect<std::string> Scanners::InternalCursor::ScanString()
 {
     const char *be = C;
     char Quote_ = *be;
@@ -197,7 +197,7 @@ teacc::Util::Expect<std::string> LexicalScanners::InternalCursor::ScanString()
     return Str;
 }
 
-LexicalScanners::InternalCursor::InternalCursor(const char *Source_)
+Scanners::InternalCursor::InternalCursor(const char *Source_)
 {
     C = Source_;
     E = C + std::strlen(C) - 1;
@@ -209,14 +209,14 @@ LexicalScanners::InternalCursor::InternalCursor(const char *Source_)
 
 //---------------------------------------------------------------------------------------------------------------------------
 #pragma region NumSCanner
-LexicalScanners::NumScanner::NumScanner(const char *_c, const char *_eos) : B(_c), E(_eos), Eos(_eos)
+Scanners::NumScanner::NumScanner(const char *_c, const char *_eos) : B(_c), E(_eos), Eos(_eos)
 {}
 
 /*!
  * @brief For now a bare minimum digit with some rough floating point scan.
  * @return true if the C pointer is consumed and advanced
  */
-bool LexicalScanners::NumScanner::operator++(int)
+bool Scanners::NumScanner::operator++(int)
 {
     if(C >= E)
         return false;
@@ -239,7 +239,7 @@ bool LexicalScanners::NumScanner::operator++(int)
  * @brief Implements boolean operator
  * @return true if this NumScanner was  a valid numeric sequence, false otherwise.
  */
-LexicalScanners::NumScanner::operator bool()
+Scanners::NumScanner::operator bool()
 {
     return false;
 }
@@ -250,7 +250,7 @@ LexicalScanners::NumScanner::operator bool()
  *
  * @note Numeric Base is omitted as of this version. Thus it only computes the Scale.
  */
-Type::T LexicalScanners::NumScanner::operator()()
+Type::T Scanners::NumScanner::operator()()
 {
     
     if(!Real)
@@ -275,7 +275,7 @@ Type::T LexicalScanners::NumScanner::operator()()
 
 #pragma region Scanners
 
-teacc::Util::Expect<std::size_t> LexicalScanners::Scan()
+teacc::Util::Expect<std::size_t> Scanners::Scan()
 {
     if((!mConfig.mSource) || (!mConfig.mTokensCollection))
         return (Rem::Save() << Rem::Type::Error << " :-> " << Rem::Int::UnExpected << " nullptr on Source Text or Tokens Collection Stream.");
@@ -319,7 +319,7 @@ teacc::Util::Expect<std::size_t> LexicalScanners::Scan()
 
 
 
-LexicalScanners::Return LexicalScanners::Number(TokenData &Token_)
+Scanners::Return Scanners::Number(TokenData &Token_)
 {
     NumScanner Num_ = {mCursor.C, mCursor.E};
     while(Num_++);
@@ -335,11 +335,11 @@ LexicalScanners::Return LexicalScanners::Number(TokenData &Token_)
     
     if( !(Token_.S & Type::real))
     {
-        String str;
+        Util::String str;
         str << Token_.Attr();
         uint64_t D=0;
         std::istringstream i(str.c_str());
-        switch(Num_.n)
+        switch(Num_.Num)
         {
             case NumScanner::Bin:
                 //????????? ah!
@@ -382,7 +382,7 @@ LexicalScanners::Return LexicalScanners::Number(TokenData &Token_)
 }
 
 
-LexicalScanners::Return LexicalScanners::Identifier(TokenData &Token_)
+Scanners::Return Scanners::Identifier(TokenData &Token_)
 {
     const char* C = mCursor.C;
     if( !(std::isalpha(*C)) && (*C != '_') )
@@ -411,7 +411,7 @@ LexicalScanners::Return LexicalScanners::Identifier(TokenData &Token_)
 
 
 
-LexicalScanners::Return LexicalScanners::Literal(TokenData &Token_)
+Scanners::Return Scanners::Literal(TokenData &Token_)
 {
     
     const char* i = mCursor.C; // i on the quote lexem

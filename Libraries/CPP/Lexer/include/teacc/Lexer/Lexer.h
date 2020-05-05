@@ -12,7 +12,7 @@
 
 namespace teacc::Lexer
 {
-class LEXER_LIB LexicalScanners
+class LEXER_LIB Scanners
 {
 
     struct InternalCursor{
@@ -79,15 +79,15 @@ public:
         TokenData::Collection*  mTokensCollection    = nullptr;
     };
     
-    using ReturnData = Util::Expect<LexicalScanners::ConfigData>;
+    using ReturnData = Util::Expect<Scanners::ConfigData>;
     using Return     = Util::Expect <> ;
-    LexicalScanners()                       = default;
-    LexicalScanners(const LexicalScanners&) = default;
-    LexicalScanners(LexicalScanners&&)      = default;
+    Scanners()                = default;
+    Scanners(const Scanners&) = default;
+    Scanners(Scanners&&)      = default;
     /*!
      * @brief nothing to do as of this version.
      */
-    ~LexicalScanners()                      = default;
+    ~Scanners()                      = default;
     
     ConfigData& Config() { return mConfig; }
     
@@ -100,9 +100,9 @@ private:
     
     #pragma region Scanners
     
-    LexicalScanners::Return Number(TokenData&);
-    LexicalScanners::Return Identifier(TokenData&);
-    LexicalScanners::Return Literal(TokenData&);
+    Scanners::Return Number(TokenData&);
+    Scanners::Return Identifier(TokenData&);
+    Scanners::Return Literal(TokenData&);
     
     #pragma endregion Scanners
     

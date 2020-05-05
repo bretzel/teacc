@@ -438,6 +438,16 @@ Type::T TokenData::Int(const std::string &Str_)
     return Type_;
 }
 
+
+std::string TokenData::Details()
+{
+    Util::String Str = "Details: '%s': %s::{%s}";
+    Str << Attr() << TypeName() << SemanticTypes();
+    return Str();
+}
+
+
+
 std::string TokenData::LocationData::operator()()
 {
     if(!End || !Begin)
