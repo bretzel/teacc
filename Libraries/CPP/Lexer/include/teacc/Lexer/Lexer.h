@@ -9,6 +9,7 @@
 #include <teacc/Lexer/Lib.h>
 #include <teacc/Util/Rem.h>
 #include <teacc/Lexer/TokenData.h>
+#include <libmng_types.h>
 
 namespace teacc::Lexer
 {
@@ -22,20 +23,21 @@ class LEXER_LIB Scanners
         
         bool operator ++();
         bool operator ++(int);
-        bool SkipWS();
-        bool Eof(const char* P=nullptr);
-        int Index();
+        [[maybe_unused]] bool SkipWS();
+        bool Eof(const char* P=nullptr) const;
+        long Index() const;
         int L = -1;
         int Col = -1;
         void Sync();
         std::string ScanToEol();
-        std::string Line();
-        std::string Mark();
-        std::string Location();
+        std::string Line() const;
+        std::string Mark() const;
+        std::string Location() const;
         bool _F = false;
         Util::Rem::Int ScanTo(const char *SubStr_);
         Util::Expect<std::string> ScanString();
         
+        InternalCursor() = default;
         InternalCursor(const char* Source_);
     }mCursor;
     
@@ -79,9 +81,10 @@ public:
         TokenData::Collection*  mTokensCollection    = nullptr;
     };
     
+    
     using ReturnData = Util::Expect<Scanners::ConfigData>;
     using Return     = Util::Expect <> ;
-    Scanners()                = default;
+    Scanners() = default;
     Scanners(const Scanners&) = default;
     Scanners(Scanners&&)      = default;
     /*!
@@ -96,7 +99,7 @@ public:
 private:
     ConfigData mConfig;
     
-    void Append(TokenData& Token_);
+    void Append(TokenData& Token_) const;
     
     #pragma region Scanners
     

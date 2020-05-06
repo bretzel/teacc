@@ -3,6 +3,7 @@
 //
 
 #include "LexerTests.h"
+#include <teacc/Lexer/Lexer.h>
 
 Expect<> LexerTests::Run(String::Collection Args_)
 {
@@ -30,6 +31,8 @@ using teacc::Util::String;
 using teacc::Util::Rem;
 using teacc::Util::Expect;
 
+using teacc::TokenData;
+
 
 
 auto main(int argc, char** argv) -> int
@@ -37,12 +40,28 @@ auto main(int argc, char** argv) -> int
     String::Collection Args = String::ArgsArray(argc, argv);
     
     DTest::Diagnostic D;
-    D
-    << DTest::TestData{"Lexer::ArgToken::Scan", &LexerTests::Run};
-    //<< DTest::TestData{"Util::AppBook", UtilAppBook::Run};
-    
-   
+    D << DTest::TestData{"Lexer::ArgToken::Scan", &LexerTests::Run};
     D.Run(Args);
     Args.clear();
+    
+    // --- Arbitrary [non-diagnostic] tests:
+    std::string str = "45.5;";
+    TokenData::Collection Tokens;
+    teacc::Lexer::Scanners Scanners;
+    Scanners.Config() = {
+        str.c_str(),
+        &Tokens
+    };
+    
+    std::cout << "Scanners::Scan(): \n";
+    Expect<std::size_t> R = Scanners.Scan();
+    std::cout << "Scanners : " << Rem::ToStr(static_cast<Rem::Int>(*R)) << '\n';
+    
+    
+    Rem::Clear([](Rem& R) {
+       std::cout << R() << '\n';
+    });
+    
+    
     return 0;
 }

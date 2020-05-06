@@ -8,10 +8,7 @@
 
 using teacc::Util::Rem;
 
-namespace teacc
-{
-
-namespace Lexer
+namespace teacc::Lexer
 {
 
 #pragma region InternalCursor
@@ -43,13 +40,13 @@ bool Scanners::InternalCursor::operator++(int)
     return ++(*this);
 }
 
-/*!
+ /*!
  * @brief Skips white spaces character, advancing(/consuming) C pointer
  *
  * Named method, just calls the prefix increment operator.
  * @return true if C is not on EOF, false otherwise.
  */
-bool Scanners::InternalCursor::SkipWS()
+[[maybe_unused]] bool Scanners::InternalCursor::SkipWS()
 {
     return ++(*this);
 }
@@ -59,7 +56,7 @@ bool Scanners::InternalCursor::SkipWS()
  * @param P
  * @return true if P is EOF, false otherwise.
  */
-bool Scanners::InternalCursor::Eof(const char *P)
+bool Scanners::InternalCursor::Eof(const char *P) const
 {
     if(P)
         return P > E;
@@ -74,15 +71,13 @@ bool Scanners::InternalCursor::Eof(const char *P)
 void Scanners::InternalCursor::Sync()
 {
     L = 1;
-    const char *Pos_ = C;
     while(C > B)
     {
-        if((*Pos_ == '\n') || (*Pos_ == '\r'))
+        if((*C == '\n') || (*C == '\r'))
             ++L;
         --C;
     }
     
-    Pos_ = C;
     Col = 1;
     while((C > B) && (*C != '\n') && (*C != '\r'))
     {
@@ -91,20 +86,21 @@ void Scanners::InternalCursor::Sync()
     }
 }
 
+
 /*!
  * @brief Get the ptrdiff between the C pointer and the beginning of the source text (B pointer).
  * @return int.
  */
-int Scanners::InternalCursor::Index()
+long Scanners::InternalCursor::Index() const
 {
-    return C - B;
+    return (ptrdiff_t) (C - B);
 }
 
 /*!
  * @brief Advances/Consume the C pointer till the next NewLine{'\r'; '\n'}  code in the source text
  * @return distinct std::string of the sequence.
  */
-std::string Scanners::InternalCursor::ScanToEol()
+[[maybe_unused]] std::string Scanners::InternalCursor::ScanToEol()
 {
     std::string Str;
     while((C <= E) && (*C != '\n') && (*C != '\r'))
@@ -116,7 +112,7 @@ std::string Scanners::InternalCursor::ScanToEol()
  * @brief Get a std::string copy of the current line from the C pointer
  * @return string.
  */
-std::string Scanners::InternalCursor::Line()
+std::string Scanners::InternalCursor::Line() const
 {
     std::string Str;
     
@@ -142,7 +138,7 @@ std::string Scanners::InternalCursor::Line()
   * @note : Must be Sync()'ed before calling Mark();
  
  */
-std::string Scanners::InternalCursor::Mark()
+std::string Scanners::InternalCursor::Mark() const
 {
     Util::String Str = Line();
     Str << '\n';
@@ -156,14 +152,14 @@ std::string Scanners::InternalCursor::Mark()
  * @brief Get the string representation of the [internal]cursor location in the source text.
  * @return std::string
  */
-std::string Scanners::InternalCursor::Location()
+[[maybe_unused]] std::string Scanners::InternalCursor::Location() const
 {
     Util::String Str = "%d,%d";
     Str << L << Col;
     return Str();
 }
 
-void Scanners::Append(TokenData &Token_)
+void Scanners::Append(TokenData &Token_) const
 {
     // Consume the Cursor the length of the Token [text] Attribute.
     //...
@@ -175,7 +171,7 @@ void Scanners::Append(TokenData &Token_)
  * @param SubStr_
  * @return Expect code.
  */
-Rem::Int Scanners::InternalCursor::ScanTo(const char *SubStr_)
+[[maybe_unused]] Rem::Int Scanners::InternalCursor::ScanTo(const char *SubStr_)
 {
     
     return Util::Rem::Int::Ok;
@@ -209,8 +205,10 @@ Scanners::InternalCursor::InternalCursor(const char *Source_)
 
 //---------------------------------------------------------------------------------------------------------------------------
 #pragma region NumSCanner
-Scanners::NumScanner::NumScanner(const char *_c, const char *_eos) : B(_c), E(_eos), Eos(_eos)
-{}
+Scanners::NumScanner::NumScanner(const char *_c, const char *_eos) : B(_c), C(_c), E(_eos), Eos(_eos)
+{
+    std::cout << __PRETTY_FUNCTION__ << ": B:" << *B << "->\n";
+}
 
 /*!
  * @brief For now a bare minimum digit with some rough floating point scan.
@@ -218,6 +216,7 @@ Scanners::NumScanner::NumScanner(const char *_c, const char *_eos) : B(_c), E(_e
  */
 bool Scanners::NumScanner::operator++(int)
 {
+    std::cout << __PRETTY_FUNCTION__ << "C:'" << *C << "'";
     if(C >= E)
         return false;
     
@@ -277,39 +276,42 @@ Type::T Scanners::NumScanner::operator()()
 
 teacc::Util::Expect<std::size_t> Scanners::Scan()
 {
+   
     if((!mConfig.mSource) || (!mConfig.mTokensCollection))
         return (Rem::Save() << Rem::Type::Error << " :-> " << Rem::Int::UnExpected << " nullptr on Source Text or Tokens Collection Stream.");
     
     mCursor = InternalCursor(mConfig.mSource);
-    
+    std::cout << __PRETTY_FUNCTION__ << "Cursor: '" << mCursor.B << "'\n";
     Return R;
     
-    while(mCursor.Eof())
+    while(!mCursor.Eof())
     {
         TokenData Token_ = TokenData::Scan(mCursor.C);
         if(!Token_)
         {
+            std::cout << "Lexer: Not a Ref Token:\n";
             // Try literal numeric expr:
-            if((R = Number(Token_)))
+            if(!(R = Number(Token_)))
             {
+                std::cout << "Lexer: Not a number:\n";
                 if(*R == Rem::Int::Rejected)
                 {
                     if(!(R = Identifier(Token_)))
                         return R();
                 }
             }
-            return R();
         }
         else // [Pre]Analyse further
         {
+            std::cout << Token_.Details() << '\n';
             ///@todo Place to the lexical analyzers map!
-            //            return (
-            //                Rem::Save() <<
-            //                Rem::Type::Message <<
-            //                Rem::Int::Implement << ": " <<
-            //                " Lexical Analyzers are not yet defined :" <<
-            //                Token_.Mark()
-            //            );
+                        return (
+                            Rem::Save() <<
+                            Rem::Type::Message <<
+                            Rem::Int::Implement << ": " <<
+                            " Lexical Analyzers are not yet defined :" <<
+                            Token_.Mark()
+                        );
             ;
         }
         return (Rem::Save() << Rem::Type::Message << Rem::Int::Implement << ": " << " Lexical Analyzers are not yet defined :" << Token_.Mark());
@@ -321,7 +323,10 @@ teacc::Util::Expect<std::size_t> Scanners::Scan()
 
 Scanners::Return Scanners::Number(TokenData &Token_)
 {
+    
+    std::cout << __PRETTY_FUNCTION__ << ":\n";
     NumScanner Num_ = {mCursor.C, mCursor.E};
+    std::cout << " OK pas planté encore...{" << Num_.C << "}\n";
     while(Num_++);
     if(!Num_)
         return Rem::Int::Rejected;
@@ -425,43 +430,43 @@ Scanners::Return Scanners::Literal(TokenData &Token_)
     ++i; c = i;
     Token_.mLoc.Begin = mCursor.C;
     while (!mCursor.Eof(i) && (*i && (*i != q))) {
-        std::cerr << "i on '" << *i << "'\n";
-        // Note '\n' est UN BYTE. == (int)10.
-        if (*i == '\\') { // Sauf si on a explicitement '\\' dans la string.
-            ++i;
-            if (mCursor.Eof(i)) {
-                std::cout << " eof in \"" << litteral << "\"....\n";
-                return {};
-            }
-            switch (*i) { // On garde le switch-case. Faire une (std::)map serait, je crois, plus coûteux en resources ici.
-                case 'n':
-                    litteral += (char)10; ++i; // Codé à la dur mais c<est pourtant universellement le code ascii assigné
-                    break;
-                case 'r':
-                    litteral += (char)13; ++i;
-                    break;
-                case 't':
-                    litteral += (char)8; ++i;
-                    break;
-                case 'a': // on le garde. Oops. je m'en souviens plus, du code ASCII.... :)
-                    ++i;
-                    break;
-                case 'c':
-                    litteral += (char)3; ++i;
-                    break;
-                case '0': // Okay oui. ( code ASCII de EOF )
-                    litteral += (char)0; ++i;
-                    break;
-                case 'e':
-                    litteral += (char)27; ++i;
-                    break;
-                    ///@Todo  Continuer d'analyser les characteres de contr&ocirc;le.
-                default:
-                    litteral += *i++;
-                    break;
-            }// end switch
-            continue;
-        } // end if '\\';
+//        //std::cerr << "i on '" << *i << "'\n";
+//        // Note '\n' est UN BYTE. == (int)10.
+//        if (*i == '\\') { // Sauf si on a explicitement '\\' dans la string.
+//            ++i;
+//            if (mCursor.Eof(i)) {
+//                std::cout << " eof in \"" << litteral << "\"....\n";
+//                return {};
+//            }
+//            switch (*i) { // On garde le switch-case. Faire une (std::)map serait, je crois, plus coûteux en resources ici.
+//                case 'n':
+//                    litteral += (char)10; ++i; // Codé à la dur mais c<est pourtant universellement le code ascii assigné
+//                    break;
+//                case 'r':
+//                    litteral += (char)13; ++i;
+//                    break;
+//                case 't':
+//                    litteral += (char)8; ++i;
+//                    break;
+//                case 'a': // on le garde. Oops. je m'en souviens plus, du code ASCII.... :)
+//                    ++i;
+//                    break;
+//                case 'c':
+//                    litteral += (char)3; ++i;
+//                    break;
+//                case '0': // Okay oui. ( code ASCII de EOF )
+//                    litteral += (char)0; ++i;
+//                    break;
+//                case 'e':
+//                    litteral += (char)27; ++i;
+//                    break;
+//                    ///@Todo  Continuer d'analyser les characteres de contr&ocirc;le.
+//                default:
+//                    litteral += *i++;
+//                    break;
+//            }// end switch
+//            continue;
+//        } // end if '\\';
         litteral += *i++;
     }
     if (mCursor.Eof(i)) {
@@ -469,7 +474,7 @@ Scanners::Return Scanners::Literal(TokenData &Token_)
         goto UnterminatedError;
     }
     //--i;
-    std::cerr << "end : i on '" << *i << "'\n";
+    //std::cerr << "end : i on '" << *i << "'\n";
     //if (/* *i && (*/*i == q/*)*/) {
     mCursor.Sync();
     Token_.mLoc.Begin = mCursor.C; // +1;
@@ -497,4 +502,5 @@ Scanners::Return Scanners::Literal(TokenData &Token_)
 
 #pragma endregion Scanners
 
-}}
+}
+
