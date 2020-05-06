@@ -8,12 +8,15 @@
 #include <teacc/Util/Rem.h>
 #include <map>
 
+#include <teacc/Util/CArguments.h>
+
+
 using namespace teacc::Util;
 
 namespace DTest
 {
 
-struct DiagnosticData
+struct DIAGNOSTIC_LIB DiagnosticData
 {
     
     using Collection = std::map<std::string, DiagnosticData>;
@@ -54,15 +57,19 @@ private:
 
 
 
+
 struct TestData{
     std::string Name;
     DiagnosticData::RunFN_t Fn;
 };
 
+
+
 class DIAGNOSTIC_LIB Diagnostic
 {
     DiagnosticData::Collection mData; ///< Reference Tests
     std::string mName;
+    
 public:
     
     
