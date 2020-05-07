@@ -111,6 +111,12 @@ private:
         En math&eacute;matiques, les op&eacute;rations et leurs pr&eacute;cedences sont universelles - donc on r&egrave;gle les erreurs de syntaxe
         aussit&ocirc;t qu'&agrave; la phase d'analyse lexicale du code source!
      */
+    
+    using ScannerPFn = Scanners::Return(Scanners::*)(TokenData&);
+    using InputRhsPair = std::pair<Type::T, Type::T>;
+    using AssocPhase1 = std::map<Scanners::InputRhsPair, Scanners::ScannerPFn>;
+    static Scanners::AssocPhase1 _AssocScannersTable;
+    static std::map<Type::T, ScannerPFn> _ProdTable;
     Scanners::Return Number(TokenData&);
     Scanners::Return Identifier(TokenData&);
     Scanners::Return Literal(TokenData&);
@@ -120,14 +126,19 @@ private:
     Scanners::Return Punctuation(TokenData&);
     Scanners::Return Keyword(TokenData&);
     
-    using ScannerPFn = Scanners::Return(Scanners::*)(TokenData&);
-    using InputRhsPair = std::pair<Type::T, Type::T>;
-//public:
-    using AssocPhase1 = std::map<Scanners::InputRhsPair, Scanners::ScannerPFn>;
-//private:
-    static Scanners::AssocPhase1 _AssocScannersTable;
     
-    static std::map<Type::T, ScannerPFn> _ProdTable;
+    Scanners::Return InputBinary(TokenData&);
+    Scanners::Return InputUnary(TokenData&);
+    Scanners::Return InputPunctuation(TokenData&);
+    Scanners::Return InputOpenPar(TokenData&);
+    Scanners::Return InputClosePar(TokenData&);
+    
+    
+    
+    
+    
+    
+    
     
     #pragma endregion Scanners
     

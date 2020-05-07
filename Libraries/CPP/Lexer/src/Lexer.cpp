@@ -299,10 +299,11 @@ Type::T Scanners::NumScanner::operator()() const
 #pragma region Scanners
 
 
-Scanners::AssocPhase1 SCanners::_AssocScannersTable=
+Scanners::AssocPhase1 Scanners::_AssocScannersTable=
 {
     {{Type::id, Type::bin}, &Scanners::BinaryOperators},
 };
+
 
 std::map<Type::T, Scanners::ScannerPFn> Scanners::_ProdTable = {
     {Type::bin,     &Scanners::BinaryOperators},
@@ -346,31 +347,25 @@ teacc::Util::Expect<std::size_t> Scanners::Scan()
         {
             std::cout << "Lexer: Not a Ref Token:\n";
             // Try literal numeric expr:
-            if(!(R = Number(Token_)))
+            if( (*(R = Number(Token_))) == Rem::Int::Rejected)
             {
                 std::cout << "Lexer: Not a number:\n";
-                if(*R == Rem::Int::Rejected)
-                {
-                    if(!(R = Identifier(Token_)))
-                        return R();
-                }
+                if(!(R = Identifier(Token_))) return R();
             }
             else
-                Rem::Save() << Rem::Int::Ok << " : " << Token_.Details() << "\n";
+                Rem::Save() << Rem::Int::Ok << " : " << Token_.Details(true) << "\n";
         }
         else // [Pre]Analyse further
         {
             std::cout << "Scanned TokenData:" << Token_.Details() << '\n';
-            std::cout << "End Scan loop with code:" << mConfig.mTokensCollection->size() << '\n';
             ///@todo Place to the lexical analyzers map!
             mCursor.Sync();
             return (
-                Rem::Save() << Rem::Type::Message << Rem::Int::Implement << ": " << " Lexical Analyzers are not yet defined :\n" << mCursor.Mark()
+                Rem::Save() << Rem::Type::Message << ':' << Rem::Int::Implement << ":" << " (Lexical Analyzers are not yet defined):\n" << mCursor.Mark()
             );
         }
         
     }
-    std::cout << __PRETTY_FUNCTION__  << ": Exit with code :" << mConfig.mTokensCollection->size() << "\n";
     return mConfig.mTokensCollection->size();
 }
 
@@ -450,6 +445,7 @@ Scanners::Return Scanners::Identifier(TokenData &Token_)
         return Rem::Int::Rejected;
     
     --C;
+    mCursor.Sync();
     Token_.mLoc.Begin = mCursor.C;
     Token_.mLoc.End = C;
     Token_.mLoc.C = mCursor.Col;
@@ -460,6 +456,7 @@ Scanners::Return Scanners::Identifier(TokenData &Token_)
     Token_.mFlags = { 1,0,0 };
     Token_.S = Type::leaf | Type::id;
     Token_.D = Delta::identifier;
+    Append(Token_);
     //LogDebugFn << " Attribute: [" << Token_.attribute() << ']' << Ends;
     return Rem::Int::Accepted;
 }
@@ -553,6 +550,7 @@ Scanners::Return Scanners::Literal(TokenData &Token_)
 
 Scanners::Return Scanners::BinaryOperators(TokenData &Token_)
 {
+    
     return teacc::Lexer::Scanners::Return();
 }
 

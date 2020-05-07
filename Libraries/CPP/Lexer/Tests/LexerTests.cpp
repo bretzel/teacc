@@ -45,7 +45,7 @@ auto main(int argc, char** argv) -> int
     Args.clear();
     
     // --- Arbitrary [non-diagnostic] tests:
-    std::string str = "45.5;";
+    std::string str = "Abcde_1 = 45.5;";
     TokenData::Collection Tokens;
     teacc::Lexer::Scanners Scanners;
     Scanners.Config() = {
@@ -55,7 +55,7 @@ auto main(int argc, char** argv) -> int
     
     std::cout << "Scanners::Scan(): \n";
     Expect<std::size_t> R = Scanners.Scan();
-    std::cout << "Scanners : " << Rem::ToStr(static_cast<Rem::Int>(*R)) << '\n';
+    std::cout << "Scanners return " << *R << "; produced " << Tokens.size()<< " Token(s)\n";
     
     for(auto  Token_ : Tokens)
         std::cout << Token_.Details(true ) << "\n";
