@@ -53,16 +53,16 @@ install(TARGETS ${TargetName}
 SET(EXPR "\\'A = sin pi/2\;\\'")
 
 
-add_custom_command(TARGET ${TargetName} POST_BUILD
-    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${TargetName}
-
-        "--Test=\\'Lexer::TokenData::Scan\\' \\'\\>\\<\\'"
-        "--Test=\\'Util::AppBook\\' --File=/home/bretzel/Applications/bin/logs/AppBook-Test.log"
-        "--Test=\\'Lexer::TokenScan\\' ${EXPR}"
-
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BIN_DIR}
-    COMMENT "Running ${TargetName}..."
-)
+#add_custom_command(TARGET ${TargetName} POST_BUILD
+#    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${TargetName}
+#
+#        "--Test=\\'Lexer::TokenData::Scan\\' \\'\\>\\<\\'"
+#        "--Test=\\'Util::AppBook\\' --File=/home/bretzel/Applications/bin/logs/AppBook-Test.log"
+#        "--Test=\\'Lexer::TokenScan\\' ${EXPR}"
+#
+#    WORKING_DIRECTORY ${CMAKE_CURRENT_BIN_DIR}
+#    COMMENT "Running ${TargetName}..."
+#)
 
 
 #install(DIRECTORY

@@ -24,8 +24,7 @@ bool Scanners::InternalCursor::operator++()
     if(C >= E)
         return false;
     ++C;
-    while((C < E) && (!isalnum(*C)))
-        ++C;
+    while((C < E) && (isspace(*C))) ++C;
     return true;
 }
 
@@ -159,11 +158,31 @@ std::string Scanners::InternalCursor::Mark() const
     return Str();
 }
 
-void Scanners::Append(TokenData &Token_) const
+void Scanners::Append(TokenData &Token_)
 {
     // Consume the Cursor the length of the Token [text] Attribute.
     //...
+    if (!Token_)
+    {
+        Rem::Save() << Rem::Type::Error << ": Will not push a null token_t";
+        return;
+    }
+    
+    Token_.mLoc.L = mCursor.L;
+    Token_.mLoc.C = mCursor.Col;
+    std::size_t sz = Token_.mLoc.End - Token_.mLoc.Begin + 1;
+    //if (Token_.t & (type::text)) sz += 2;
+    
+    //if (token_t.loc.p < 0)
+    Token_.mLoc.I = (ptrdiff_t)(Token_.mLoc.Begin - mCursor.B);
+    
+    mCursor.C += sz;
+    mCursor.Col += sz;
+    
+    //LogDebugFn << " '" << lus:://Log::color::Yellow << Token_.attribute() << lus:://Log::color::Reset << "'" << Ends;
     mConfig.mTokensCollection->push_back(Token_);
+    ++mCursor;
+    //return Rem::Int::Accepted ;
 }
 
 /*!
@@ -207,7 +226,7 @@ Scanners::InternalCursor::InternalCursor(const char *Source_)
 #pragma region NumSCanner
 Scanners::NumScanner::NumScanner(const char *_c, const char *_eos) : B(_c), C(_c), E(_eos), Eos(_eos)
 {
-    std::cout << __PRETTY_FUNCTION__ << ": B:" << *B << "->\n";
+//    std::cout << __PRETTY_FUNCTION__ << ": B:" << *B << "->\n";
 }
 
 /*!
@@ -216,7 +235,6 @@ Scanners::NumScanner::NumScanner(const char *_c, const char *_eos) : B(_c), C(_c
  */
 bool Scanners::NumScanner::operator++(int)
 {
-    std::cout << __PRETTY_FUNCTION__ << "C:'" << *C << "'";
     if(C >= E)
         return false;
     
@@ -238,9 +256,10 @@ bool Scanners::NumScanner::operator++(int)
  * @brief Implements boolean operator
  * @return true if this NumScanner was  a valid numeric sequence, false otherwise.
  */
-Scanners::NumScanner::operator bool()
+Scanners::NumScanner::operator bool() const
 {
-    return false;
+    return C>B;
+    //return false;
 }
 
 /*!
@@ -249,13 +268,12 @@ Scanners::NumScanner::operator bool()
  *
  * @note Numeric Base is omitted as of this version. Thus it only computes the Scale.
  */
-Type::T Scanners::NumScanner::operator()()
+Type::T Scanners::NumScanner::operator()() const
 {
     
     if(!Real)
     {
-        Util::String Str;
-        Str = Str.MakeStr(C, E);
+        Util::String Str = Util::String::MakeStr(C, E);
         uint64_t D;
         Str >> D;
         uint64_t I = 0;
@@ -281,7 +299,7 @@ teacc::Util::Expect<std::size_t> Scanners::Scan()
         return (Rem::Save() << Rem::Type::Error << " :-> " << Rem::Int::UnExpected << " nullptr on Source Text or Tokens Collection Stream.");
     
     mCursor = InternalCursor(mConfig.mSource);
-    std::cout << __PRETTY_FUNCTION__ << "Cursor: '" << mCursor.B << "'\n";
+    //std::cout << __PRETTY_FUNCTION__ << "Cursor: '" << mCursor.B << "'\n";
     Return R;
     
     while(!mCursor.Eof())
@@ -305,18 +323,13 @@ teacc::Util::Expect<std::size_t> Scanners::Scan()
         {
             std::cout << Token_.Details() << '\n';
             ///@todo Place to the lexical analyzers map!
-                        return (
-                            Rem::Save() <<
-                            Rem::Type::Message <<
-                            Rem::Int::Implement << ": " <<
-                            " Lexical Analyzers are not yet defined :" <<
-                            Token_.Mark()
-                        );
-            ;
+            return (
+                Rem::Save() << Rem::Type::Message << Rem::Int::Implement << ": " << " Lexical Analyzers are not yet defined :" << Token_.Mark()
+            );
         }
-        return (Rem::Save() << Rem::Type::Message << Rem::Int::Implement << ": " << " Lexical Analyzers are not yet defined :" << Token_.Mark());
+        
     }
-    return static_cast<std::size_t>(Rem::Int::Rejected);
+    return mConfig.mTokensCollection->size();
 }
 
 

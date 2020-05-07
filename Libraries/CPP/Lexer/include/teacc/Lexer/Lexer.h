@@ -70,8 +70,8 @@ class LEXER_LIB Scanners
         //bool operator++();
         bool operator++(int);
 
-        explicit operator bool ();
-        Type::T operator()();
+        explicit operator bool () const;
+        Type::T operator()() const;
     };
 
 public:
@@ -99,7 +99,7 @@ public:
 private:
     ConfigData mConfig;
     
-    void Append(TokenData& Token_) const;
+    void Append(TokenData& Token_) ;
     
     #pragma region Scanners
     
