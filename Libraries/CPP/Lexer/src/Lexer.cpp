@@ -201,8 +201,11 @@ teacc::Util::Expect<std::string> Scanners::InternalCursor::ScanString()
     const char *be = C;
     char Quote_ = *be;
     std::string Str;
+    ++be;
+    
     while((be <= E) && (*be != Quote_))
         Str += *be++;
+    
     if((*be != Quote_) && (be > E))
     {
         Sync();
@@ -211,6 +214,8 @@ teacc::Util::Expect<std::string> Scanners::InternalCursor::ScanString()
     Str += *be; // Include the rhs Quote.
     return Str;
 }
+
+
 
 Scanners::InternalCursor::InternalCursor(const char *Source_)
 {
@@ -224,10 +229,10 @@ Scanners::InternalCursor::InternalCursor(const char *Source_)
 
 //---------------------------------------------------------------------------------------------------------------------------
 #pragma region NumSCanner
-Scanners::NumScanner::NumScanner(const char *_c, const char *_eos) : B(_c), C(_c), E(_eos), Eos(_eos)
-{
-//    std::cout << __PRETTY_FUNCTION__ << ": B:" << *B << "->\n";
-}
+Scanners::NumScanner::NumScanner(const char *_c, const char *_eos) :
+B(_c), C(_c), E(nullptr), Eos(_eos){}
+
+
 
 /*!
  * @brief For now a bare minimum digit with some rough floating point scan.
@@ -248,6 +253,7 @@ bool Scanners::NumScanner::operator++(int)
         else
             return false;
     }
+    E = C;
     ++C;
     return true;
 }
@@ -258,7 +264,7 @@ bool Scanners::NumScanner::operator++(int)
  */
 Scanners::NumScanner::operator bool() const
 {
-    return C>B;
+    return E>=B;
     //return false;
 }
 
@@ -270,10 +276,9 @@ Scanners::NumScanner::operator bool() const
  */
 Type::T Scanners::NumScanner::operator()() const
 {
-    
     if(!Real)
     {
-        Util::String Str = Util::String::MakeStr(C, E);
+        Util::String Str = Util::String::MakeStr(B, E);
         uint64_t D;
         Str >> D;
         uint64_t I = 0;
@@ -301,9 +306,15 @@ teacc::Util::Expect<std::size_t> Scanners::Scan()
     mCursor = InternalCursor(mConfig.mSource);
     //std::cout << __PRETTY_FUNCTION__ << "Cursor: '" << mCursor.B << "'\n";
     Return R;
+    const char* Check_ = nullptr;
     
     while(!mCursor.Eof())
     {
+        if(Check_ == mCursor.C)
+        {
+            return (Rem::Save() << Rem::Int::Fail << " : Unhandled Lexem :\n" << mCursor.Mark());
+        }
+        Check_ = mCursor.C;
         TokenData Token_ = TokenData::Scan(mCursor.C);
         if(!Token_)
         {
@@ -318,6 +329,8 @@ teacc::Util::Expect<std::size_t> Scanners::Scan()
                         return R();
                 }
             }
+            else
+                Rem::Save() << Rem::Int::Ok << " : " << Token_.Details() << "\n";
         }
         else // [Pre]Analyse further
         {
@@ -336,17 +349,12 @@ teacc::Util::Expect<std::size_t> Scanners::Scan()
 
 Scanners::Return Scanners::Number(TokenData &Token_)
 {
-    
-    std::cout << __PRETTY_FUNCTION__ << ":\n";
     NumScanner Num_ = {mCursor.C, mCursor.E};
-    std::cout << " OK pas planté encore...{" << Num_.C << "}\n";
     while(Num_++);
     if(!Num_)
         return Rem::Int::Rejected;
     
-    // It is:
-    
-    // Update data : (Token_ and mCursor)
+    // Update data : (for Token_, mCursor)
     mCursor.Sync();
     Type::T S = Num_();
     Token_ = {Lexem::Mnemonic::noop, S, Type::number | S, Delta::identifier, {Num_.B, Num_.E, mCursor.L, mCursor.Col, mCursor.Index()}, {1, 0, 0}, nullptr};
