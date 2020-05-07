@@ -182,6 +182,7 @@ void Scanners::Append(TokenData &Token_)
     //LogDebugFn << " '" << lus:://Log::color::Yellow << Token_.attribute() << lus:://Log::color::Reset << "'" << Ends;
     mConfig.mTokensCollection->push_back(Token_);
     ++mCursor;
+    std::cout << __PRETTY_FUNCTION__ << ":\n" << mCursor.Mark() << '\n';
     //return Rem::Int::Accepted ;
 }
 
@@ -240,7 +241,7 @@ B(_c), C(_c), E(nullptr), Eos(_eos){}
  */
 bool Scanners::NumScanner::operator++(int)
 {
-    if(C >= E)
+    if(C >= Eos)
         return false;
     
     if(!isdigit(*C))
@@ -297,6 +298,31 @@ Type::T Scanners::NumScanner::operator()() const
 
 #pragma region Scanners
 
+
+Scanners::AssocPhase1 SCanners::_AssocScannersTable=
+{
+    {{Type::id, Type::bin}, &Scanners::BinaryOperators},
+};
+
+std::map<Type::T, Scanners::ScannerPFn> Scanners::_ProdTable = {
+    {Type::bin,     &Scanners::BinaryOperators},
+    {Type::id,      &Scanners::Identifier},
+    {Type::unary,   &Scanners::UnaryOperators},
+    {Type::keyword, &Scanners::Keyword},
+    {Type::punctuation,   &Scanners::Punctuation}
+};
+
+
+
+
+
+
+
+
+
+
+
+
 teacc::Util::Expect<std::size_t> Scanners::Scan()
 {
    
@@ -334,14 +360,17 @@ teacc::Util::Expect<std::size_t> Scanners::Scan()
         }
         else // [Pre]Analyse further
         {
-            std::cout << Token_.Details() << '\n';
+            std::cout << "Scanned TokenData:" << Token_.Details() << '\n';
+            std::cout << "End Scan loop with code:" << mConfig.mTokensCollection->size() << '\n';
             ///@todo Place to the lexical analyzers map!
+            mCursor.Sync();
             return (
-                Rem::Save() << Rem::Type::Message << Rem::Int::Implement << ": " << " Lexical Analyzers are not yet defined :" << Token_.Mark()
+                Rem::Save() << Rem::Type::Message << Rem::Int::Implement << ": " << " Lexical Analyzers are not yet defined :\n" << mCursor.Mark()
             );
         }
         
     }
+    std::cout << __PRETTY_FUNCTION__  << ": Exit with code :" << mConfig.mTokensCollection->size() << "\n";
     return mConfig.mTokensCollection->size();
 }
 
@@ -519,6 +548,29 @@ Scanners::Return Scanners::Literal(TokenData &Token_)
     return (
         Rem::Save() << Rem::Type::Error << ": " <<  Rem::Int::Unterminated << '\n' << Token_.Mark()
     );
+}
+
+
+Scanners::Return Scanners::BinaryOperators(TokenData &Token_)
+{
+    return teacc::Lexer::Scanners::Return();
+}
+
+Scanners::Return Scanners::UnaryOperators(TokenData &)
+{
+    return teacc::Lexer::Scanners::Return();
+}
+Scanners::Return Scanners::FactorNotation(TokenData &)
+{
+    return teacc::Lexer::Scanners::Return();
+}
+Scanners::Return Scanners::Punctuation(TokenData &)
+{
+    return teacc::Lexer::Scanners::Return();
+}
+Scanners::Return Scanners::Keyword(TokenData &)
+{
+    return teacc::Lexer::Scanners::Return();
 }
 
 #pragma endregion Scanners

@@ -11,6 +11,9 @@
 #include <teacc/Lexer/TokenData.h>
 #include <libmng_types.h>
 
+#include <map>
+#include <utility>
+
 namespace teacc::Lexer
 {
 class LEXER_LIB Scanners
@@ -102,10 +105,29 @@ private:
     void Append(TokenData& Token_) ;
     
     #pragma region Scanners
-    
+    /*
+        (English text will follows after this)
+        Il s'agit ici de pr&eacute;-analyser une expression arith&eacute;tique par association de paires de types pris dans la table des tokens/symboles de r&eacute;f&eacute;ce.
+        En math&eacute;matiques, les op&eacute;rations et leurs pr&eacute;cedences sont universelles - donc on r&egrave;gle les erreurs de syntaxe
+        aussit&ocirc;t qu'&agrave; la phase d'analyse lexicale du code source!
+     */
     Scanners::Return Number(TokenData&);
     Scanners::Return Identifier(TokenData&);
     Scanners::Return Literal(TokenData&);
+    Scanners::Return BinaryOperators(TokenData&);
+    Scanners::Return UnaryOperators(TokenData&);
+    Scanners::Return FactorNotation(TokenData&);
+    Scanners::Return Punctuation(TokenData&);
+    Scanners::Return Keyword(TokenData&);
+    
+    using ScannerPFn = Scanners::Return(Scanners::*)(TokenData&);
+    using InputRhsPair = std::pair<Type::T, Type::T>;
+//public:
+    using AssocPhase1 = std::map<Scanners::InputRhsPair, Scanners::ScannerPFn>;
+//private:
+    static Scanners::AssocPhase1 _AssocScannersTable;
+    
+    static std::map<Type::T, ScannerPFn> _ProdTable;
     
     #pragma endregion Scanners
     

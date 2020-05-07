@@ -57,6 +57,8 @@ auto main(int argc, char** argv) -> int
     Expect<std::size_t> R = Scanners.Scan();
     std::cout << "Scanners : " << Rem::ToStr(static_cast<Rem::Int>(*R)) << '\n';
     
+    for(auto  Token_ : Tokens)
+        std::cout << Token_.Details(true ) << "\n";
     
     Rem::Clear([](Rem& R) {
        std::cout << R() << '\n';

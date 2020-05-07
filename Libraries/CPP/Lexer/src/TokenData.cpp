@@ -439,10 +439,12 @@ Type::T TokenData::Int(const std::string &Str_)
 }
 
 
-std::string TokenData::Details()
+std::string TokenData::Details(bool Mark_)
 {
-    Util::String Str = "Details: '%s': %s::{%s}";
-    Str << Attr() << TypeName() << SemanticTypes();
+    Util::String Str = "Details: '%s': Pos(%d,%d), %s::{%s}";
+    Str << Attr() << mLoc.L << mLoc.C << TypeName() << SemanticTypes();
+    if(Mark_)
+        Str << '\n' << Mark();
     return Str();
 }
 
