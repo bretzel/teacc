@@ -14,7 +14,7 @@ namespace teacc
 
 struct LEXER_LIB TokenData
 {
-    Lexem::Mnemonic C   = Lexem::Mnemonic::noop;
+    Lexem::Mnemonic M   = Lexem::Mnemonic::noop;
     Type::T        T  =  Type::null;    ///< Primitive Type bit.
     Type::T        S   = Type::null;	///< Semantic Type bits field
     Delta::T D = Delta::noop;

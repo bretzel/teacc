@@ -19,27 +19,27 @@ std::map<T, std::string> T_STR = {{null,        "null"},
                                   {text,        "text"},
                                   {voidptr,     "voidptr"},
                                   {any,         "any"},
-                                  {leaf,        "leaf"},
-                                  {sign,        "sign"},
-                                  {i8,          "i8"},
-                                  {i16,         "i16"},
-                                  {i32,         "i32"},
-                                  {i64,         "i64"},
-                                  {u8,          "u8"},
-                                  {u16,         "u16"},
-                                  {u32,         "u32"},
-                                  {u64,         "u64"},
-                                  {real,        "real"},
-                                  {var,         "var"},
-                                  {bloc,        "bloc"},
-                                  {filo,        "filo"},
-                                  {keyword,     "keyword"},
-                                  {unary,       "unary"},
-                                  {prefix,      "prefix"},
-                                  {postfix,     "postfix"},
-                                  {oper,        "operator"},
-                                  {binary,      "binary"},
-                                  {func,        "rtfn"},
+                                  {leaf,    "leaf"},
+                                  {sign,    "sign"},
+                                  {i8,      "i8"},
+                                  {i16,     "i16"},
+                                  {i32,     "i32"},
+                                  {i64,     "i64"},
+                                  {u8,      "u8"},
+                                  {u16,     "u16"},
+                                  {u32,     "u32"},
+                                  {u64,     "u64"},
+                                  {fp,      "fp"},
+                                  {var,     "var"},
+                                  {bloc,    "bloc"},
+                                  {filo,    "filo"},
+                                  {keyword, "keyword"},
+                                  {unary,   "unary"},
+                                  {prefix,  "prefix"},
+                                  {postfix, "postfix"},
+                                  {oper,    "operator"},
+                                  {binary,  "binary"},
+                                  {func,    "rtfn"},
                                   {funcptr,     "rtfn ptr"},
                                   {obj,         "object"},
                                   {pointer,     "pointer"},
@@ -68,27 +68,27 @@ std::map<std::string, T> STR_T = {{"null",         null},
                                   {"voidptr",      voidptr},
                                   {"void-pointer", voidptr},
                                   {"any",          any},
-                                  {"leaf",         leaf},
-                                  {"sign",         sign},
-                                  {"i8",           i8},
-                                  {"i16",          i16},
-                                  {"i32",          i32},
-                                  {"i64",          i64},
-                                  {"u8",           u8},
-                                  {"u16",          u16},
-                                  {"u32",          u32},
-                                  {"u64",          u64},
-                                  {"real",         real},
-                                  {"var",          var},
-                                  {"variable",     var},
-                                  {"bloc",         bloc},
-                                  {"filo",         filo},
-                                  {"stack",        filo},
-                                  {"keyword",      keyword},
-                                  {"unary",        unary},
-                                  {"prefix",       prefix},
-                                  {"postfix",      postfix},
-                                  {"oper",         oper},
+                                  {"leaf",     leaf},
+                                  {"sign",     sign},
+                                  {"i8",       i8},
+                                  {"i16",      i16},
+                                  {"i32",      i32},
+                                  {"i64",      i64},
+                                  {"u8",       u8},
+                                  {"u16",      u16},
+                                  {"u32",      u32},
+                                  {"u64",      u64},
+                                  {"fp",     fp},
+                                  {"var",      var},
+                                  {"variable", var},
+                                  {"bloc",     bloc},
+                                  {"filo",     filo},
+                                  {"stack",    filo},
+                                  {"keyword",  keyword},
+                                  {"unary",    unary},
+                                  {"prefix",   prefix},
+                                  {"postfix",  postfix},
+                                  {"oper",     oper},
                                   {"operator",     oper},
                                   {"binary",       binary},
                                   {"binary-op",    binary},
@@ -142,7 +142,7 @@ std::string TokenData::Str(Type::T Type_)
 
 TokenData::TokenData(Lexem::Mnemonic Code_, Type::T Type_, Type::T Sem_, Delta::T Delta_, Lexem::T aLexem, int8_t V)
 {
-    C = Code_;
+    M = Code_;
     T = Type_;
     S = Sem_;
     D = Delta_;
@@ -152,7 +152,7 @@ TokenData::TokenData(Lexem::Mnemonic Code_, Type::T Type_, Type::T Sem_, Delta::
 
 TokenData::TokenData(Lexem::Mnemonic Code_, Type::T Type_, Type::T Sem_, Delta::T Delta_, TokenData::LocationData LocationData_, TokenData::Flag Flags_, void *Ptr_)
 {
-    C       = Code_;
+    M       = Code_;
     T       = Type_;
     S       = Sem_;
     D       = Delta_;
@@ -163,7 +163,7 @@ TokenData::TokenData(Lexem::Mnemonic Code_, Type::T Type_, Type::T Sem_, Delta::
 
 TokenData::TokenData(const TokenData &Token_)
 {
-    C       = Token_.C;
+    M       = Token_.M;
     T       = Token_.T;
     S       = Token_.S;
     D       = Token_.D;
@@ -174,7 +174,7 @@ TokenData::TokenData(const TokenData &Token_)
 
 TokenData::TokenData(TokenData &&Token_) noexcept
 {
-    std::swap(C       , Token_.C);
+    std::swap(M       , Token_.M);
     std::swap(T       , Token_.T);
     std::swap(S       , Token_.S);
     std::swap(D       , Token_.D);
@@ -185,7 +185,7 @@ TokenData::TokenData(TokenData &&Token_) noexcept
 
 TokenData &TokenData::operator=(TokenData &&Token_) noexcept
 {
-    std::swap(C       , Token_.C);
+    std::swap(M       , Token_.M);
     std::swap(T       , Token_.T);
     std::swap(S       , Token_.S);
     std::swap(D       , Token_.D);
@@ -197,7 +197,7 @@ TokenData &TokenData::operator=(TokenData &&Token_) noexcept
 
 TokenData &TokenData::operator=(const TokenData &Token_)
 {
-    C       = Token_.C;
+    M       = Token_.M;
     T       = Token_.T;
     S       = Token_.S;
     D       = Token_.D;
@@ -341,7 +341,7 @@ static TokenData::Collection TokensRefTable = {
 TokenData TokenData::operator[](Lexem::Mnemonic CC)
 {
     for(TokenData Tok : TokensRefTable) {
-        if(CC == Tok.C)
+        if(CC == Tok.M)
             return Tok;
     }
     return TokenData();
@@ -409,7 +409,7 @@ TokenData TokenData::Scan(const char *C_)
                 ++unicode;
             ++crs;
             ++rtxt;
-            ////std::cout << *crs << *rtxt << ',';
+            ////std::cout << *crs << *rtxt << ','; sin0x4A
         }
         
         if(*rtxt == 0)

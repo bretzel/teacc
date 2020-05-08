@@ -280,7 +280,7 @@ void String::PutArg(const string &aStr)
     Printf<const string &>(aStr);
 }
 
-// Ce qui fait royalement chier avec les iterateurs des stl, C'est que depuis L'iterateur, comment on accede � son conteneur ???????
+// Ce qui fait royalement chier avec les iterateurs des stl, M'est que depuis L'iterateur, comment on accede � son conteneur ???????
 bool String::SkipWS(string::iterator &pos)
 {
     if(_Cursor.C == _Cursor.E)
@@ -293,7 +293,7 @@ bool String::SkipWS(string::iterator &pos)
     return true;
 }
 
-// Ce qui fait royalement chier avec les iterateurs des stl, C'est que depuis L'iterateur, comment on accede � son conteneur ???????
+// Ce qui fait royalement chier avec les iterateurs des stl, M'est que depuis L'iterateur, comment on accede � son conteneur ???????
 bool String::SkipWS(const char *pos)
 {
     if(!pos)
@@ -408,7 +408,7 @@ std::size_t String::Words(String::Word::Collection &wcollection, const std::stri
     }
     _Cursor.Reset(_D);
     std::string token_separators = a_delimiters.empty() ? String::_DefaultSeparators : a_delimiters;
-    //std::cout << " contents after bce::Reset\n ------------- \n" << _D << "\n---------------\n: [\n" << *_Cursor.C << "\n]\n";
+    //std::cout << " contents after bce::Reset\n ------------- \n" << _D << "\n---------------\n: [\n" << *_Cursor.M << "\n]\n";
     if(!_Cursor.Skip())
     {
         //std::cout << " --> Contents Skip is false? (internal?)...\n";
@@ -420,7 +420,7 @@ std::size_t String::Words(String::Word::Collection &wcollection, const std::stri
     while(!_Cursor.End())
     {
         if(!wcollection.empty());
-        //std::cout << __FUNCTION__ << " last inserted Word: [" << wcollection.back()() << "] - _Cursor on [" << *_Cursor.C << "]\n";
+        //std::cout << __FUNCTION__ << " last inserted Word: [" << wcollection.back()() << "] - _Cursor on [" << *_Cursor.M << "]\n";
         std::string::const_iterator cc = _Cursor.C;
         if(token_separators.find(*_Cursor.C) != string::npos)
         {
@@ -470,7 +470,7 @@ std::size_t String::Words(String::Word::Collection &wcollection, const std::stri
                 //std::cout << __FUNCTION__ << " 1:[" << wcollection.back()() << "]; ";
             }
             
-            string::const_iterator p = ScanTo(w.B + (keep_as_word ? 0 : 1), *_Cursor.C); // w.B is the starting position, _Cursor.C is the quote delim.
+            string::const_iterator p = ScanTo(w.B + (keep_as_word ? 0 : 1), *_Cursor.C); // w.B is the starting position, _Cursor.M is the quote delim.
             while(_Cursor.C < p)
                 ++_Cursor; // compute white spaces!!!
             
@@ -666,7 +666,7 @@ void String::ProcessArg( String::LambdaFn Fn )
         case '0':fmt.F = *c++;
             break;
         default:
-            //++C;
+            //++M;
             break;
     }
     

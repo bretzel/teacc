@@ -14,10 +14,10 @@ namespace teacc::Lexer
 #pragma region InternalCursor
 
 /*!
- * @brief Skips white spaces character, advancing(/consuming) C pointer
+ * @brief Skips white spaces character, advancing(/consuming) M pointer
  *
  * Prefix increment operator
- * @return true if C is not on EOF, false otherwise.
+ * @return true if M is not on EOF, false otherwise.
  */
 bool Scanners::InternalCursor::operator++()
 {
@@ -29,10 +29,10 @@ bool Scanners::InternalCursor::operator++()
 }
 
 /*!
- * @brief Skips white spaces character, advancing(/consuming) C pointer
+ * @brief Skips white spaces character, advancing(/consuming) M pointer
  *
  * Postfix increment operator, just calls the prefix increment operator.
- * @return true if C is not on EOF, false otherwise.
+ * @return true if M is not on EOF, false otherwise.
  */
 bool Scanners::InternalCursor::operator++(int)
 {
@@ -40,10 +40,10 @@ bool Scanners::InternalCursor::operator++(int)
 }
 
  /*!
- * @brief Skips white spaces character, advancing(/consuming) C pointer
+ * @brief Skips white spaces character, advancing(/consuming) M pointer
  *
  * Named method, just calls the prefix increment operator.
- * @return true if C is not on EOF, false otherwise.
+ * @return true if M is not on EOF, false otherwise.
  */
 [[maybe_unused]] bool Scanners::InternalCursor::SkipWS()
 {
@@ -63,7 +63,7 @@ bool Scanners::InternalCursor::Eof(const char *P) const
 }
 
 /*!
- * @brief Synchronize the Location data from the C pointer.
+ * @brief Synchronize the Location data from the M pointer.
  *
  * @return none.
  */
@@ -87,7 +87,7 @@ void Scanners::InternalCursor::Sync()
 
 
 /*!
- * @brief Get the ptrdiff between the C pointer and the beginning of the source text (B pointer).
+ * @brief Get the ptrdiff between the M pointer and the beginning of the source text (B pointer).
  * @return int.
  */
 long Scanners::InternalCursor::Index() const
@@ -96,7 +96,7 @@ long Scanners::InternalCursor::Index() const
 }
 
 /*!
- * @brief Advances/Consume the C pointer till the next NewLine{'\r'; '\n'}  code in the source text
+ * @brief Advances/Consume the M pointer till the next NewLine{'\r'; '\n'}  code in the source text
  * @return distinct std::string of the sequence.
  */
 [[maybe_unused]] std::string Scanners::InternalCursor::ScanToEol()
@@ -108,7 +108,7 @@ long Scanners::InternalCursor::Index() const
 }
 
 /*!
- * @brief Get a std::string copy of the current line from the C pointer
+ * @brief Get a std::string copy of the current line from the M pointer
  * @return string.
  */
 std::string Scanners::InternalCursor::Line() const
@@ -187,7 +187,7 @@ void Scanners::Append(TokenData &Token_)
 }
 
 /*!
- * @brief Advances/Consumes the C pointer to Skip till SubStr_ match.
+ * @brief Advances/Consumes the M pointer to Skip till SubStr_ match.
  * @param SubStr_
  * @return Expect code.
  */
@@ -237,7 +237,7 @@ B(_c), C(_c), E(nullptr), Eos(_eos){}
 
 /*!
  * @brief For now a bare minimum digit with some rough floating point scan.
- * @return true if the C pointer is consumed and advanced
+ * @return true if the M pointer is consumed and advanced
  */
 bool Scanners::NumScanner::operator++(int)
 {
@@ -271,7 +271,7 @@ Scanners::NumScanner::operator bool() const
 
 /*!
  * @brief Computes the numeric scale and 'best gess' base.
- * @return one [combined] of {{u,i}{8,16,32,64}} | real| oct | hex | bin.
+ * @return one [combined] of {{u,i}{8,16,32,64}} | fp| oct | hex | bin.
  *
  * @note Numeric Base is omitted as of this version. Thus it only computes the Scale.
  */
@@ -291,7 +291,7 @@ Type::T Scanners::NumScanner::operator()() const
     }
     
     ///@todo SCAN SCIENTIFIC NOTATION !!!!!!
-    return Type::real;
+    return Type::fp;
 }
 
 #pragma endregion NumSCanner
@@ -312,13 +312,6 @@ std::map<Type::T, Scanners::ScannerPFn> Scanners::_ProdTable = {
     {Type::keyword, &Scanners::Keyword},
     {Type::punctuation,   &Scanners::Punctuation}
 };
-
-
-
-
-
-
-
 
 
 
@@ -383,7 +376,7 @@ Scanners::Return Scanners::Number(TokenData &Token_)
     Type::T S = Num_();
     Token_ = {Lexem::Mnemonic::noop, S, Type::number | S, Delta::identifier, {Num_.B, Num_.E, mCursor.L, mCursor.Col, mCursor.Index()}, {1, 0, 0}, nullptr};
     
-    if( !(Token_.S & Type::real))
+    if( !(Token_.S & Type::fp))
     {
         Util::String str;
         str << Token_.Attr();
@@ -451,7 +444,7 @@ Scanners::Return Scanners::Identifier(TokenData &Token_)
     Token_.mLoc.C = mCursor.Col;
     Token_.mLoc.L = mCursor.L;
     Token_.mLoc.I = mCursor.Index(); ///@todo Reduce overhead.
-    Token_.C = Lexem::Mnemonic::noop;
+    Token_.M = Lexem::Mnemonic::noop;
     Token_.T = Type::id;
     Token_.mFlags = { 1,0,0 };
     Token_.S = Type::leaf | Type::id;
@@ -476,83 +469,38 @@ Scanners::Return Scanners::Literal(TokenData &Token_)
     //if (result r; !(r = scan_unexpected(Token_))) return r; // Sous reserve
     ++i; c = i;
     Token_.mLoc.Begin = mCursor.C;
-    while (!mCursor.Eof(i) && (*i && (*i != q))) {
-//        //std::cerr << "i on '" << *i << "'\n";
-//        // Note '\n' est UN BYTE. == (int)10.
-//        if (*i == '\\') { // Sauf si on a explicitement '\\' dans la string.
-//            ++i;
-//            if (mCursor.Eof(i)) {
-//                std::cout << " eof in \"" << litteral << "\"....\n";
-//                return {};
-//            }
-//            switch (*i) { // On garde le switch-case. Faire une (std::)map serait, je crois, plus coûteux en resources ici.
-//                case 'n':
-//                    litteral += (char)10; ++i; // Codé à la dur mais c<est pourtant universellement le code ascii assigné
-//                    break;
-//                case 'r':
-//                    litteral += (char)13; ++i;
-//                    break;
-//                case 't':
-//                    litteral += (char)8; ++i;
-//                    break;
-//                case 'a': // on le garde. Oops. je m'en souviens plus, du code ASCII.... :)
-//                    ++i;
-//                    break;
-//                case 'c':
-//                    litteral += (char)3; ++i;
-//                    break;
-//                case '0': // Okay oui. ( code ASCII de EOF )
-//                    litteral += (char)0; ++i;
-//                    break;
-//                case 'e':
-//                    litteral += (char)27; ++i;
-//                    break;
-//                    ///@Todo  Continuer d'analyser les characteres de contr&ocirc;le.
-//                default:
-//                    litteral += *i++;
-//                    break;
-//            }// end switch
-//            continue;
-//        } // end if '\\';
-        litteral += *i++;
-    }
+    while (!mCursor.Eof(i) && (*i && (*i != q))) litteral += *i++;
     if (mCursor.Eof(i)) {
         std::cout << " eof ->  scanned: \"" << litteral << "\"....\n";
-        goto UnterminatedError;
+        Token_.mLoc.Begin = Token_.mLoc.End = mCursor.C;
+        Token_.mLoc.I = mCursor.Index();
+        Token_.mLoc.L = mCursor.L;
+        Token_.mLoc.C = mCursor.Col;
+        return (
+            Rem::Save() << Rem::Type::Error << ": " <<  Rem::Int::Unterminated << '\n' << Token_.Mark()
+        );
     }
-    //--i;
-    //std::cerr << "end : i on '" << *i << "'\n";
-    //if (/* *i && (*/*i == q/*)*/) {
     mCursor.Sync();
     Token_.mLoc.Begin = mCursor.C; // +1;
     Token_.mLoc.End = i;
     Token_.mLoc.L = mCursor.L;
     Token_.mLoc.C = mCursor.Col;
     
-    Token_.C = Lexem::Mnemonic::noop;
+    Token_.M = Lexem::Mnemonic::noop;
     Token_.T = Type::text;
     Token_.S = Type::text | Type::leaf;
     std::cerr << "Litteral accepted:token_t[" << Token_.Attr() << "]\n";
-    return { Rem::Int::Accepted };
-    //}
-    UnterminatedError:
-    Token_.mLoc.Begin = mCursor.C;
-    Token_.mLoc.End = mCursor.C; ///@todo  D&eacute;terminer la s&eacute;quence &agrave; fournir.
-    Token_.mLoc.I = mCursor.C - mCursor.B;
-    Token_.mLoc.L = mCursor.L;
-    Token_.mLoc.C = mCursor.Col;
+    return Rem::Int::Accepted;
     
-    return (
-        Rem::Save() << Rem::Type::Error << ": " <<  Rem::Int::Unterminated << '\n' << Token_.Mark()
-    );
 }
 
 
 Scanners::Return Scanners::BinaryOperators(TokenData &Token_)
 {
-    
-    return teacc::Lexer::Scanners::Return();
+    if((Token_.M == Lexem::Mnemonic::add) || (Token_.M == Lexem::Mnemonic::sub)) return Sign(Token_);
+    return Rem::Int::Accepted;
 }
+
 
 Scanners::Return Scanners::UnaryOperators(TokenData &)
 {
@@ -568,6 +516,11 @@ Scanners::Return Scanners::Punctuation(TokenData &)
 }
 Scanners::Return Scanners::Keyword(TokenData &)
 {
+    return teacc::Lexer::Scanners::Return();
+}
+Scanners::Return Scanners::Sign(TokenData &)
+{
+    
     return teacc::Lexer::Scanners::Return();
 }
 

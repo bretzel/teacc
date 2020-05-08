@@ -27,7 +27,7 @@ constexpr T u8              = 0x000000400;
 constexpr T u16             = 0x000000800;
 constexpr T u32             = 0x000001000;
 constexpr T u64             = 0x000002000;
-constexpr T real            = 0x000004000; // real: f32, f64, f128... ^^
+constexpr T fp              = 0x000004000; // fp: f32, f64, f128... ^^
 constexpr T var             = 0x000008000; // Ne pas oublier d'ajouter ce type a toutes "variables"
 constexpr T bloc            = 0x000010000;
 constexpr T filo            = 0x000020000;
@@ -48,7 +48,7 @@ constexpr T punctuation     = 0x080000000;
 constexpr T assign          = 0x100000000;
 constexpr T boolean         = 0x200000000;
 constexpr T hex             = 0x400000000;
-constexpr T leftpar         = 0x800000000;
+constexpr T leftpar         = 0x800000000; // (, {, [, <, |<;  |<A>|
 constexpr T closepar        = 0x1000000000;
 constexpr T openabs         = 0x2000000000;
 constexpr T closeabs        = 0x4000000000;
@@ -58,6 +58,8 @@ constexpr T f64             = 0x20000000000;
 constexpr T f128            = 0x40000000000;
 constexpr T octal           = 0x80000000000;
 constexpr T bin             = 0x100000000000;
+constexpr T openpair        = 0x200000000000;
+constexpr T closepair       = 0x400000000000;
 
 //std::string LEXER_LIB ToStr(T ty);
 //T LEXER_LIB Int(const std::string &Names_);
@@ -280,7 +282,7 @@ constexpr T ki8             = "i8";
 constexpr T ki16            = "i16";
 constexpr T ki32            = "i32";
 constexpr T ki64            = "i64";
-constexpr T kreal           = "real";
+constexpr T kreal           = "fp";
 constexpr T kstring         = "string";
 constexpr T kthen           = "then";
 constexpr T kelse           = "else";

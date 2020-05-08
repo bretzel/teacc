@@ -125,6 +125,7 @@ private:
     Scanners::Return FactorNotation(TokenData&);
     Scanners::Return Punctuation(TokenData&);
     Scanners::Return Keyword(TokenData&);
+    Scanners::Return Sign(TokenData&);
     
     
     Scanners::Return InputBinary(TokenData&);

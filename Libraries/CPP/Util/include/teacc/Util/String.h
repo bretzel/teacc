@@ -419,7 +419,7 @@ template<typename T> String &String::Printf(const T &_argv)
         case '0':fmt.F = *c++;
             break;
         default:
-            //++C;
+            //++M;
             break;
     }
 
