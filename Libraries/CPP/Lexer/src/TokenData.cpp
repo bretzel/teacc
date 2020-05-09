@@ -414,10 +414,18 @@ TokenData TokenData::Scan(const char *C_)
         
         if(*rtxt == 0)
         {
-            if((*crs && (isalnum(*(crs)))) &&(Tok.S & Type::keyword) && !(Tok.S & Type::oper) && (Tok.T != Type::hex)) continue;
-            Tok.mLoc.Begin = C_;
-            Tok.mLoc.End = Tok.mLoc.Begin + (crs-C_);
-            return Tok;
+            if(*crs && !isspace(*crs))
+            {
+                if(isalnum(*crs) && (Tok.S & Type::keyword) && !(Tok.S & Type::oper) && (Tok.T != Type::hex))
+                    continue;
+            }
+            else
+            {
+                Tok.mLoc.Begin = C_;
+                Tok.mLoc.End = Tok.mLoc.Begin + (crs - C_);
+                return Tok;
+            }
+            
         }
     }
     return TokenData();
