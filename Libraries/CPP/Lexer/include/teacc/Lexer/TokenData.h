@@ -72,17 +72,17 @@ struct LEXER_LIB TokenData
     
     
     [[nodiscard]] bool IsBinary()        const{return S & Type::binary;}
-    [[nodiscard]] bool isUnary()         const{return S & Type::unary;}
-    [[nodiscard]] bool isIdentifier()    const{return S & Type::id;}
-    [[nodiscard]] bool isLeaf()          const{return S & Type::leaf;}
-    [[nodiscard]] bool isOperator()      const{return S & Type::oper;}
-    [[nodiscard]] bool isClosing_pair()  const{return S & Type::closepar;}
-    [[nodiscard]] bool isPunctuation()   const{return S & Type::punctuation;}
-    [[nodiscard]] bool isNumber()        const{return S & Type::number;}
-    [[nodiscard]] bool isHexadecimal()   const{return S & Type::hex;}
-    [[nodiscard]] bool isPrefix()        const{return S & Type::prefix;}
-    [[nodiscard]] bool isPostfix()       const{return S & Type::postfix;}
-    [[nodiscard]] bool isInstruction()   const{return !(S & (Type::oper | Type::leaf));}
+    [[nodiscard]] bool IsUnary()         const{return S & Type::unary;}
+    [[nodiscard]] bool IsIdentifier()    const{return S & Type::id;}
+    [[nodiscard]] bool IsLeaf()          const{return S & Type::leaf;}
+    [[nodiscard]] bool IsOperator()      const{return S & Type::oper;}
+    [[nodiscard]] bool IsClosing_pair()  const{return S & Type::closepar;}
+    [[nodiscard]] bool IsPunctuation()   const{return S & Type::punctuation;}
+    [[nodiscard]] bool IsNumber()        const{return S & Type::number;}
+    [[nodiscard]] bool IsHexadecimal()   const{return S & Type::hex;}
+    [[nodiscard]] bool IsPrefix()        const{return S & Type::prefix;}
+    [[nodiscard]] bool IsPostfix()       const{return S & Type::postfix;}
+    [[nodiscard]] bool IsInstruction()   const{return !(S & (Type::oper | Type::leaf));}
     
     
     

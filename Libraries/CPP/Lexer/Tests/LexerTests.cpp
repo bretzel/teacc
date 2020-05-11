@@ -45,7 +45,7 @@ auto main(int argc, char** argv) -> int
     Args.clear();
     
     // --- Arbitrary [non-diagnostic] tests:
-    std::string str = "Abcde_1 = 45.5;";
+    std::string str = "Abcde_1 = 45.5 * 500 - sin 0.2*40;";
     TokenData::Collection Tokens;
     teacc::Lexer::Scanners Scanners;
     Scanners.Config() = {

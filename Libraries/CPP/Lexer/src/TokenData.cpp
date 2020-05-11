@@ -424,7 +424,7 @@ TokenData TokenData::Scan(const char *C_)
             return Tok;
         }
     }
-    return TokenData();
+    return TokenData::mNull;
 }
 
 Type::T TokenData::Int(const std::string &Str_)

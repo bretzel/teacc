@@ -160,30 +160,21 @@ std::string Scanners::InternalCursor::Mark() const
 
 void Scanners::Append(TokenData &Token_)
 {
-    // Consume the Cursor the length of the Token [text] Attribute.
-    //...
     if (!Token_)
     {
         Rem::Save() << Rem::Type::Error << ": Will not push a null token_t";
         return;
     }
     
-    Token_.mLoc.L = mCursor.L;
-    Token_.mLoc.C = mCursor.Col;
+//    Token_.mLoc.L = mCursor.L;
+//    Token_.mLoc.C = mCursor.Col;
     std::size_t sz = Token_.mLoc.End - Token_.mLoc.Begin + 1;
-    //if (Token_.t & (type::text)) sz += 2;
-    
-    //if (token_t.loc.p < 0)
     Token_.mLoc.I = (ptrdiff_t)(Token_.mLoc.Begin - mCursor.B);
-    
     mCursor.C += sz;
     mCursor.Col += sz;
-    
-    //LogDebugFn << " '" << lus:://Log::color::Yellow << Token_.attribute() << lus:://Log::color::Reset << "'" << Ends;
     mConfig.mTokensCollection->push_back(Token_);
     ++mCursor;
     std::cout << __PRETTY_FUNCTION__ << ":\n" << mCursor.Mark() << '\n';
-    //return Rem::Int::Accepted ;
 }
 
 /*!
@@ -316,7 +307,10 @@ std::map<Type::T, Scanners::ScannerPFn> Scanners::_ProdTable = {
 
 
 
-
+/*!
+ * @brief LExer's main loop.
+ * @return Size of the produced TokenData stream.
+ */
 teacc::Util::Expect<std::size_t> Scanners::Scan()
 {
    
@@ -324,7 +318,6 @@ teacc::Util::Expect<std::size_t> Scanners::Scan()
         return (Rem::Save() << Rem::Type::Error << " :-> " << Rem::Int::UnExpected << " nullptr on Source Text or Tokens Collection Stream.");
     
     mCursor = InternalCursor(mConfig.mSource);
-    //std::cout << __PRETTY_FUNCTION__ << "Cursor: '" << mCursor.B << "'\n";
     Return R;
     const char* Check_ = nullptr;
     
@@ -374,7 +367,21 @@ Scanners::Return Scanners::Number(TokenData &Token_)
     // Update data : (for Token_, mCursor)
     mCursor.Sync();
     Type::T S = Num_();
-    Token_ = {Lexem::Mnemonic::noop, S, Type::number | S, Delta::identifier, {Num_.B, Num_.E, mCursor.L, mCursor.Col, mCursor.Index()}, {1, 0, 0}, nullptr};
+    Token_ = {
+            Lexem::Mnemonic::noop,
+            S,
+            Type::number | S,
+            Delta::identifier,
+            {
+                 Num_.B,
+                 Num_.E,
+                 mCursor.L,
+                 mCursor.Col,
+                 mCursor.Index()
+            },
+            {1, 0, 0},
+            nullptr
+    };
     
     if( !(Token_.S & Type::fp))
     {
@@ -401,7 +408,6 @@ Scanners::Return Scanners::Number(TokenData &Token_)
                 break;
         }
         
-        //std::cout << __PRETTY_FUNCTION__ << " Parsed number:" << D << '\n';
         uint64_t n = 0;
         std::array<uint64_t,3> R = {0x100,0x10000,0x100000000};
         while(D >= R[n])
@@ -450,7 +456,6 @@ Scanners::Return Scanners::Identifier(TokenData &Token_)
     Token_.S = Type::leaf | Type::id;
     Token_.D = Delta::identifier;
     Append(Token_);
-    //LogDebugFn << " Attribute: [" << Token_.attribute() << ']' << Ends;
     return Rem::Int::Accepted;
 }
 
@@ -489,15 +494,21 @@ Scanners::Return Scanners::Literal(TokenData &Token_)
     Token_.M = Lexem::Mnemonic::noop;
     Token_.T = Type::text;
     Token_.S = Type::text | Type::leaf;
-    std::cerr << "Litteral accepted:token_t[" << Token_.Attr() << "]\n";
+    Append(Token_);
     return Rem::Int::Accepted;
-    
 }
 
 
 Scanners::Return Scanners::BinaryOperators(TokenData &Token_)
 {
-    if((Token_.M == Lexem::Mnemonic::add) || (Token_.M == Lexem::Mnemonic::sub)) return Sign(Token_);
+    if((Token_.M == Lexem::Mnemonic::add) || (Token_.M == Lexem::Mnemonic::sub)) (void)Sign(Token_);
+    
+    mCursor.Sync();
+    Token_.mLoc.Begin = mCursor.C; // +1;
+    Token_.mLoc.L = mCursor.L;
+    Token_.mLoc.C = mCursor.Col;
+    
+    
     return Rem::Int::Accepted;
 }
 
@@ -506,23 +517,47 @@ Scanners::Return Scanners::UnaryOperators(TokenData &)
 {
     return teacc::Lexer::Scanners::Return();
 }
+
+
 Scanners::Return Scanners::FactorNotation(TokenData &)
 {
     return teacc::Lexer::Scanners::Return();
 }
+
+
 Scanners::Return Scanners::Punctuation(TokenData &)
 {
     return teacc::Lexer::Scanners::Return();
 }
+
+
 Scanners::Return Scanners::Keyword(TokenData &)
 {
     return teacc::Lexer::Scanners::Return();
 }
-Scanners::Return Scanners::Sign(TokenData &)
+
+
+/*!
+ * @brief Internal call to set the add or sub binary operators as prefix signed operators.
+ * @param Token_
+ * @return Accepted or Rejected Rem.
+ */
+Scanners::Return Scanners::Sign(TokenData &Token_)
 {
+    TokenData Head = !mConfig.mTokensCollection->empty() ? mConfig.mTokensCollection->back() : TokenData::mNull;
+    if(Head)
+    {
+        if(Head.IsPrefix() || Head.IsBinary())
+        {
+            Token_.T = Type::prefix;
+            Token_.S = (Head.S & ~Type::bin) | Type::prefix|Type::sign;
+            return Rem::Int::Accepted;
+        }
+    }
     
-    return teacc::Lexer::Scanners::Return();
+    return Rem::Int::Rejected;
 }
+
 
 #pragma endregion Scanners
 
