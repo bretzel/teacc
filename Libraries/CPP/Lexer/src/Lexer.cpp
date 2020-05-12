@@ -343,12 +343,20 @@ teacc::Util::Expect<std::size_t> Scanners::Scan()
         }
         else // [Pre]Analyse further
         {
-            std::cout << "Scanned TokenData:" << Token_.Details() << '\n';
-            ///@todo Place to the lexical analyzers map!
-            mCursor.Sync();
-            return (
-                Rem::Save() << Rem::Type::Message << ':' << Rem::Int::Implement << ":" << " (Lexical Analyzers are not yet defined):\n" << mCursor.Mark()
-            );
+            auto N = _ProdTable.find(Token_.T);
+            if(N->second)
+            {
+                R = (this->*N->second)(Token_);
+                if(!R)
+                    return R();
+            }
+            else
+            {
+                std::cout << "Scanned TokenData:" << Token_.Details() << '\n';
+                ///@todo Place to the lexical analyzers map!
+                mCursor.Sync();
+                return (Rem::Save() << Rem::Type::Message << ':' << Rem::Int::Implement << ":" << " (Lexical Analyzers are not yet defined):\n" << Token_.Mark());
+            }
         }
         
     }
@@ -507,33 +515,54 @@ Scanners::Return Scanners::BinaryOperators(TokenData &Token_)
     Token_.mLoc.Begin = mCursor.C; // +1;
     Token_.mLoc.L = mCursor.L;
     Token_.mLoc.C = mCursor.Col;
-    
+    Append(Token_);
     
     return Rem::Int::Accepted;
 }
 
 
-Scanners::Return Scanners::UnaryOperators(TokenData &)
+/*!
+ * @brief Prefix or Postfix unary operators.
+ *
+ * Here I will determine if not set explicitly, the Token_ is prefix or suffix operator.
+ * @param Token_
+ * @return Accepted or Rejected
+ */
+Scanners::Return Scanners::UnaryOperators(TokenData &Token_)
 {
-    return teacc::Lexer::Scanners::Return();
+    mCursor.Sync();
+    Token_.mLoc.L = mCursor.L;
+    Token_.mLoc.C = mCursor.Col;
+    Append(Token_);
+    return Rem::Int::Accepted;
 }
 
 
-Scanners::Return Scanners::FactorNotation(TokenData &)
+Scanners::Return Scanners::FactorNotation(TokenData &Token_)
 {
-    return teacc::Lexer::Scanners::Return();
+    return (
+            Rem::Save() << Rem::Type::Error << ": " <<  Rem::Int::Implement << '\n' << Token_.Mark()
+        );
 }
 
 
-Scanners::Return Scanners::Punctuation(TokenData &)
+Scanners::Return Scanners::Punctuation(TokenData &Token_)
 {
-    return teacc::Lexer::Scanners::Return();
+    mCursor.Sync();
+    Token_.mLoc.L = mCursor.L;
+    Token_.mLoc.C = mCursor.Col;
+    Append(Token_);
+    return Rem::Int::Accepted;
 }
 
 
-Scanners::Return Scanners::Keyword(TokenData &)
+Scanners::Return Scanners::Keyword(TokenData &Token_)
 {
-    return teacc::Lexer::Scanners::Return();
+    mCursor.Sync();
+    Token_.mLoc.L = mCursor.L;
+    Token_.mLoc.C = mCursor.Col;
+    Append(Token_);
+    return Rem::Int::Accepted;
 }
 
 

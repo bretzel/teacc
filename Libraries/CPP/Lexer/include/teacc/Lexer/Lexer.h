@@ -128,19 +128,13 @@ private:
     Scanners::Return Sign(TokenData&);
     
     
-    Scanners::Return InputBinary(TokenData&);
-    Scanners::Return InputUnary(TokenData&);
-    Scanners::Return InputPunctuation(TokenData&);
-    Scanners::Return InputOpenPar(TokenData&);
-    Scanners::Return InputClosePar(TokenData&);
-    
-    
-    
-    
-    
-    
-    
-    
+//    Scanners::Return InputBinary(TokenData&);
+//    Scanners::Return InputUnary(TokenData&);
+//    Scanners::Return InputPunctuation(TokenData&);
+//    Scanners::Return InputOpenPar(TokenData&);
+//    Scanners::Return InputClosePar(TokenData&);
+//
+
     #pragma endregion Scanners
     
 };
